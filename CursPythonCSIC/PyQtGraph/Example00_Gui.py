@@ -16,6 +16,7 @@ from PyQt5 import Qt
 from pyqtgraph.parametertree import Parameter, ParameterTree
 
 import Trees.SignalConfiguration as SigConfig
+import ThreadsAndFunctions.SignalGeneration as SigGen
 
 class MainWindow(Qt.QWidget):
     ''' Main Window '''
@@ -46,6 +47,8 @@ class MainWindow(Qt.QWidget):
         self.setGeometry(550, 10, 300, 700)
         self.setWindowTitle('MainWindow')
         self.btnStart.clicked.connect(self.on_btnStart)
+        
+        self.threadGeneration = None
 
 #############################Changes Control##############################
     def on_Params_changed(self, param, changes):
@@ -61,12 +64,28 @@ class MainWindow(Qt.QWidget):
         print('  data:      %s' % str(data))
         print('  ----------')       
         
+#############################Changes Emits##############################
+#SiCualquierParametro de la carrier o moduladora cambia, llamar directamente a 
+        #GenCarrier y GenModulation
+        
 #############################START##############################
     def on_btnStart(self):
-        self.SignalConfigKwargs = self.SigParams.Get_SignalConf_Params()
-        print('SignalConfigKwargs -->', self.SignalConfigKwargs)
+        if self.threadGeneration is None:
+            self.SignalConfigKwargs = self.SigParams.Get_SignalConf_Params()
+            print('SignalConfigKwargs -->', self.SignalConfigKwargs)
+            self.threadGeneration = SigGen.GenerationThread(self.SignalConfigKwargs)
+            self.threadGeneration.start()
+            
+            self.btnStart.setText("Stop Gen")
+        
+        else:
+            print('Stopped')
+            self.threadGeneration.terminate()
+            self.threadGeneration = None
+            
+            self.btnStart.setText("Start Gen and Adq!")
+        
 #############################MAIN##############################
-
 
 if __name__ == '__main__':
     app = Qt.QApplication([])
