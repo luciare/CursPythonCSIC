@@ -43,7 +43,7 @@ class GenerationThread(Qt.QThread):
         #super permits to initialize the classes from which this class depends
         super(GenerationThread, self).__init__()
         self.SigGen = SigGenClass.SignalGenerator(**SigConfig)
-        self.SigGen.EveryNEvent = self.NewData
+        self.SigGen.SignalDone = self.NewData
         #inicializar selfs
         
     def run(self):

@@ -7,10 +7,16 @@ Created on Tue Mar 17 10:21:20 2020
 
 import numpy as np
 
-class SignalGenerator():
-    EveryNEvent = None
+from PyQt5 import Qt
+from PyQt5.QtCore import QObject
+
+class SignalGenerator(QObject):
+    SignalDone = Qt.pyqtSignal()
+    
     def __init__(self, Fs, nSamples, Amplitude, CarrFrequency, CarrNoise, Phase,
                  ModType, ModFrequency, ModFactor, ModNoise, **Kwargs):
+        super(SignalGenerator, self).__init__()
+        
         self.Amp = Amplitude
         self.Fs = Fs
         self.nSamples = nSamples
@@ -61,8 +67,9 @@ class SignalGenerator():
     def StartGen(self):
         self.Signal = (1+self.Modulation)*self.Carrier
         self.SignalNoise = (1+self.ModulationNoise)*self.CarrierNoise
+        self.SignalDone.emit()
         
-    def EveryNCallback(self):
-        if self.EveryNEvent:
-            print('Emit1')
-            self.EveryNEvent(self.Signal)
+    # def EveryNCallback(self):
+    #     if self.EveryNEvent:
+    #         print('Emit1')
+    #         self.EveryNEvent(self.Signal)
