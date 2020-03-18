@@ -47,10 +47,29 @@ class GenerationThread(Qt.QThread):
         self.SigGen.SignalDone.connect(self.NewData)
 
     def run(self):
+        '''
+        Run function in threads is the loop that will start when thread is
+        started.
+
+        Returns
+        -------
+        None.
+
+        '''
+        
         while True:
             self.SigGen.StartGen()
         
-    def NewData(self,):
+    def NewData(self):
+        '''
+        This function Emits a signal to notify the data is ready
+
+        Returns
+        -------
+        None.
+
+        '''
+        
         OutData = self.SigGen.Signal
         #When Data is generated an emit is done to notify it to main 
         self.NewGenData.emit()

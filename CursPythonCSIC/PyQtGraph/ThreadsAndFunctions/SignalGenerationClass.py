@@ -11,11 +11,35 @@ from scipy import signal
 from PyQt5 import Qt
 from PyQt5.QtCore import QObject
 
-class SignalGenerator(QObject):
+class SignalGenerator(QObject):    
     SignalDone = Qt.pyqtSignal()
     
     def __init__(self, Fs, nSamples, Amplitude, CarrFrequency, CarrNoise, Phase,
                  ModType, ModFrequency, ModFactor, ModNoise, **Kwargs):
+        '''
+        This class is used to generate Carrier and Modulation Waveform and
+        combine them as AM Modulation
+
+        Parameters
+        ----------
+        :param:Fs: float
+        :param:nSamples: int
+        :param:Amplitude: float
+        :param:CarrFrequency: float
+        :param:CarrNoise: float
+        :param:Phase: int
+        :param:ModType: str
+        :param:ModFrequency: float
+        :param:ModFactor: float
+        :param:ModNoise: float
+        :param:**Kwargs: kwargs
+
+        Returns
+        -------
+        None.
+
+        '''
+        
         super(SignalGenerator, self).__init__()
         
         self.Amp = Amplitude
