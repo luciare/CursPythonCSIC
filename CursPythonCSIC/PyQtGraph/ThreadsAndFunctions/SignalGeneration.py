@@ -6,6 +6,7 @@ Created on Tue Mar 17 10:09:59 2020
 """
 
 from PyQt5 import Qt
+import numpy as np
 
 import ThreadsAndFunctions.SignalGenerationClass as SigGenClass
 
@@ -43,20 +44,17 @@ class GenerationThread(Qt.QThread):
         #super permits to initialize the classes from which this class depends
         super(GenerationThread, self).__init__()
         self.SigGen = SigGenClass.SignalGenerator(**SigConfig)
-        self.SigGen.SignalDone = self.NewData
-        #inicializar selfs
-        
+        self.SigGen.SignalDone.connect(self.NewData)
+
     def run(self):
-        self.SigGen.StartGen()
-        #To generate a continuous loop in this thread
-        self.loop = Qt.QEventLoop()
-        self.loop.exec_()
+        while True:
+            self.SigGen.StartGen()
         
-    def NewData(self, GenData):
-        self.OutputData = GenData
+    def NewData(self,):
+        OutData = self.SigGen.Signal
         #When Data is generated an emit is done to notify it to main 
-        print('Emit2')
         self.NewGenData.emit()
+        
         
         
         

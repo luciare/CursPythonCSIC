@@ -10,6 +10,8 @@ import os
 
 import numpy as np
 import time
+import matplotlib.pyplot as plt
+from scipy.signal import welch
 
 from PyQt5 import Qt
 
@@ -17,6 +19,8 @@ from pyqtgraph.parametertree import Parameter, ParameterTree
 
 import Trees.SignalConfiguration as SigConfig
 import ThreadsAndFunctions.SignalGeneration as SigGen
+
+import PyqtTools.PlotModule as PltMod
 
 class MainWindow(Qt.QWidget):
     ''' Main Window '''
@@ -35,7 +39,8 @@ class MainWindow(Qt.QWidget):
         self.Parameters = Parameter.create(name='params',
                                            type='group',
                                            children=(self.SigParams,))
-        
+ 
+
 #############################GuiConfiguration##############################
         self.Parameters.sigTreeStateChanged.connect(self.on_Params_changed)
         self.treepar = ParameterTree()
@@ -49,6 +54,8 @@ class MainWindow(Qt.QWidget):
         self.btnStart.clicked.connect(self.on_btnStart)
         
         self.threadGeneration = None
+        self.threadPlotter = None
+        self.threadPsdPlotter = None
 
 #############################Changes Control##############################
     def on_Params_changed(self, param, changes):
@@ -74,9 +81,12 @@ class MainWindow(Qt.QWidget):
             self.SignalConfigKwargs = self.SigParams.Get_SignalConf_Params()
             print('SignalConfigKwargs -->', self.SignalConfigKwargs)
             self.threadGeneration = SigGen.GenerationThread(self.SignalConfigKwargs)
+            self.threadGeneration.NewGenData.connect(self.on_NewSample)
             self.threadGeneration.start()
             
             self.btnStart.setText("Stop Gen")
+            self.OldTime = time.time()
+            
         
         else:
             print('Stopped')
@@ -85,6 +95,12 @@ class MainWindow(Qt.QWidget):
             
             self.btnStart.setText("Start Gen and Adq!")
         
+    def on_NewSample(self):
+        Ts = time.time() - self.OldTime
+        self.OldTime = time.time()
+        print('Sample time', Ts)
+
+
 #############################MAIN##############################
 
 if __name__ == '__main__':

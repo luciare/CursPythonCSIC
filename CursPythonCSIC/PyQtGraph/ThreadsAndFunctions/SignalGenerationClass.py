@@ -6,6 +6,7 @@ Created on Tue Mar 17 10:21:20 2020
 """
 
 import numpy as np
+from scipy import signal
 
 from PyQt5 import Qt
 from PyQt5.QtCore import QObject
@@ -20,6 +21,7 @@ class SignalGenerator(QObject):
         self.Amp = Amplitude
         self.Fs = Fs
         self.nSamples = nSamples
+        self.t = np.arange(0, ((1/self.Fs)*(self.nSamples)), (1/self.Fs))
         self.GenCarrier(Fc=CarrFrequency,
                         phi=Phase,
                         Noise=CarrNoise)
@@ -34,31 +36,22 @@ class SignalGenerator(QObject):
         
     def GenModulationSin(self, ModFact, Fm, Noise):
         AmpMod = self.Amp*ModFact
-        stepMod = 2*np.pi*(Fm/self.Fs)
-        self.Modulation = np.complex128(AmpMod*np.exp
-                                        (1j*(stepMod*np.arange(self.nSamples)))
-                                        )
-        self.ModulationNoise = self.Carrier + np.real(np.random.normal(0, 
-                                                                       Noise, 
-                                                                       self.Modulation.size
-                                                                       )
-                                                      )
-    # def GenModulationSqr(self, Amp, ModFact, Fm, Noise=0):#Como hacerla cuadrada??
-    #     AmpMod = Amp*ModFact
-    #     stepMod = 2*np.pi*(Fm/self.Fs)
-    #     self.Modulation = np.complex128(AmpMod*np.exp
-    #                                     (1j*(stepMod*np.arange(self.nSamples)))
-    #                                     )
-    #     self.ModulationNoise = self.Carrier + np.real(np.random.normal(0, 
-    #                                                                    Noise, 
-    #                                                                    self.Signal.size
-    #                                                                    )
-    #                                                   )
+        self.Modulation =AmpMod*np.cos(Fm*2*np.pi*(self.t))
+        self.ModulationNoise = self.Modulation + np.real(np.random.normal(0, 
+                                                                        Noise, 
+                                                                        self.Modulation.size
+                                                                        )
+                                                         )
+    def GenModulationSqr(self, ModFact, Fm, Noise=0):#Como hacerla cuadrada??
+        AmpMod = self.Amp*ModFact
+        self.Modulation =AmpMod*signal.square(Fm*2*np.pi*(self.t))
+        self.ModulationNoise = self.Modulation + np.real(np.random.normal(0, 
+                                                                        Noise, 
+                                                                        self.Modulation.size
+                                                                        )
+                                                         )
     def GenCarrier(self, Fc, phi, Noise):
-        step = 2*np.pi*(Fc/self.Fs)
-        self.Carrier = np.complex128(self.Amp*np.exp
-                                     (1j*(step*np.arange(self.nSamples))+phi)
-                                     )
+        self.Carrier = self.Amp*np.cos(Fc*2*np.pi*(self.t))
         self.CarrierNoise = self.Carrier + np.real(np.random.normal(0, 
                                                                   Noise, 
                                                                   self.Carrier.size
@@ -69,7 +62,5 @@ class SignalGenerator(QObject):
         self.SignalNoise = (1+self.ModulationNoise)*self.CarrierNoise
         self.SignalDone.emit()
         
-    # def EveryNCallback(self):
-    #     if self.EveryNEvent:
-    #         print('Emit1')
-    #         self.EveryNEvent(self.Signal)
+    
+        
