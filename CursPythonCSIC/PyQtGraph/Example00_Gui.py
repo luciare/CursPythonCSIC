@@ -39,7 +39,12 @@ class MainWindow(Qt.QWidget):
         self.Parameters = Parameter.create(name='params',
                                            type='group',
                                            children=(self.SigParams,))
- 
+        self.CarrParams = self.SigParams.param('CarrierConfig')
+        self.ModParams = self.SigParams.param('ModConfig')
+        
+#############################Instancias for Changes######################
+        self.CarrParams.sigTreeStateChanged.connect(self.on_CarrierConfig_changed)
+        self.ModParams.sigTreeStateChanged.connect(self.on_ModConfig_changed)
 
 #############################GuiConfiguration##############################
         self.Parameters.sigTreeStateChanged.connect(self.on_Params_changed)
@@ -70,10 +75,31 @@ class MainWindow(Qt.QWidget):
         print('  change:    %s' % change)
         print('  data:      %s' % str(data))
         print('  ----------')       
-        
+
 #############################Changes Emits##############################
-#SiCualquierParametro de la carrier o moduladora cambia, llamar directamente a 
-        #GenCarrier y GenModulation
+    def on_CarrierConfig_changed(self):
+        if self.threadGeneration is not None:
+            self.threadGeneration.SigGen.GenCarrier(Amp=self.CarrParams.param('Amplitude').value(),
+                                                    Fc=self.CarrParams.param('CarrFrequency').value(), 
+                                                    phi=self.CarrParams.param('Phase').value(), 
+                                                    Noise=self.CarrParams.param('CarrNoise').value()
+                                                    )
+        
+    def on_ModConfig_changed(self):
+        if self.threadGeneration is not None:
+            if self.ModParams.param('ModType').value() == 'sinusoidal':
+                self.threadGeneration.SigGen.GenModulationSin(Amp=self.CarrParams.param('Amplitude').value(),
+                                                              ModFact=self.ModParams.param('ModFactor').value(),
+                                                              Fm=self.ModParams.param('ModFrequency').value(), 
+                                                              Noise=self.ModParams.param('ModNoise').value()
+                                                              )
+
+            if self.ModParams.param('ModType').value() == 'square':
+                self.threadGeneration.SigGen.GenModulationSqr(Amp=self.CarrParams.param('Amplitude').value(),
+                                                              ModFact=self.ModParams.param('ModFactor').value(), 
+                                                              Fm=self.ModParams.param('ModFrequency').value(), 
+                                                              Noise=self.ModParams.param('ModNoise').value()
+                                                              )
         
 #############################START##############################
     def on_btnStart(self):
@@ -83,6 +109,8 @@ class MainWindow(Qt.QWidget):
             self.threadGeneration = SigGen.GenerationThread(self.SignalConfigKwargs)
             self.threadGeneration.NewGenData.connect(self.on_NewSample)
             self.threadGeneration.start()
+            
+            #Falta iniciar plot y PSD cuando javi los haga para 1 
             
             self.btnStart.setText("Stop Gen")
             self.OldTime = time.time()
@@ -99,6 +127,8 @@ class MainWindow(Qt.QWidget):
         Ts = time.time() - self.OldTime
         self.OldTime = time.time()
         print('Sample time', Ts)
+        
+         #Falta mostrat plot y PSD cuando javi los haga para 1 
 
 
 #############################MAIN##############################

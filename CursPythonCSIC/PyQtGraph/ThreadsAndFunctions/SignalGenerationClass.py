@@ -42,40 +42,42 @@ class SignalGenerator(QObject):
         
         super(SignalGenerator, self).__init__()
         
-        self.Amp = Amplitude
         self.Fs = Fs
         self.nSamples = nSamples
         self.t = np.arange(0, ((1/self.Fs)*(self.nSamples)), (1/self.Fs))
-        self.GenCarrier(Fc=CarrFrequency,
+        self.GenCarrier(Amp=Amplitude,
+                        Fc=CarrFrequency,
                         phi=Phase,
                         Noise=CarrNoise)
         if ModType == 'sinusoidal':
-            self.GenModulationSin(ModFact=ModFactor, 
+            self.GenModulationSin(Amp=Amplitude,
+                                  ModFact=ModFactor, 
                                   Fm=ModFrequency, 
                                   Noise=ModNoise)
         if ModType == 'square':
-            self.GenModulationSqr(ModFact=ModFactor, 
+            self.GenModulationSqr(Amp=Amplitude,
+                                  ModFact=ModFactor, 
                                   Fm=ModFrequency, 
                                   Noise=ModNoise)
         
-    def GenModulationSin(self, ModFact, Fm, Noise):
-        AmpMod = self.Amp*ModFact
+    def GenModulationSin(self, Amp, ModFact, Fm, Noise):
+        AmpMod = Amp*ModFact
         self.Modulation =AmpMod*np.cos(Fm*2*np.pi*(self.t))
         self.ModulationNoise = self.Modulation + np.real(np.random.normal(0, 
                                                                         Noise, 
                                                                         self.Modulation.size
                                                                         )
                                                          )
-    def GenModulationSqr(self, ModFact, Fm, Noise=0):#Como hacerla cuadrada??
-        AmpMod = self.Amp*ModFact
+    def GenModulationSqr(self, Amp, ModFact, Fm, Noise):#Como hacerla cuadrada??
+        AmpMod = Amp*ModFact
         self.Modulation =AmpMod*signal.square(Fm*2*np.pi*(self.t))
         self.ModulationNoise = self.Modulation + np.real(np.random.normal(0, 
                                                                         Noise, 
                                                                         self.Modulation.size
                                                                         )
                                                          )
-    def GenCarrier(self, Fc, phi, Noise):
-        self.Carrier = self.Amp*np.cos(Fc*2*np.pi*(self.t))
+    def GenCarrier(self, Amp, Fc, phi, Noise):
+        self.Carrier = Amp*np.cos(Fc*2*np.pi*(self.t))
         self.CarrierNoise = self.Carrier + np.real(np.random.normal(0, 
                                                                   Noise, 
                                                                   self.Carrier.size
