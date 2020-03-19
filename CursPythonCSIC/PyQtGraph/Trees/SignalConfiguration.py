@@ -191,14 +191,14 @@ class SignalConfig(pTypes.GroupParameter):
                       'ModNoise': 0}
         '''
         SignalConfig = {}
-        for GeneralConfig in self.GeneralConfig.children():
-            SignalConfig[GeneralConfig.name()] = GeneralConfig.value()
+        for GeneralParams in self.GeneralConfig.children():
+            SignalConfig[GeneralParams.name()] = GeneralParams.value()
 
-        for CarrierConfig in self.CarrierConfig.children():
-            SignalConfig[CarrierConfig.name()] = CarrierConfig.value()
+        for CarrierParams in self.CarrierConfig.children():
+            SignalConfig[CarrierParams.name()] = CarrierParams.value()
 
-        for ModConfig in self.ModConfig.children():
-            SignalConfig[ModConfig.name()] = ModConfig.value()
+        for ModParams in self.ModConfig.children():
+            SignalConfig[ModParams.name()] = ModParams.value()
 
         return SignalConfig
     
