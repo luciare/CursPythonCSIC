@@ -13,7 +13,7 @@ from PyQt5.QtCore import QObject
 
 class SignalGenerator(QObject):    
     SignalDone = Qt.pyqtSignal()
-    
+
     def __init__(self, Fs, nSamples, Amplitude, CarrFrequency, CarrNoise, Phase,
                  ModType, ModFrequency, ModFactor, ModNoise, **Kwargs):
         '''
@@ -39,54 +39,74 @@ class SignalGenerator(QObject):
         None.
 
         '''
-        
+        # super permits to initialize the classes from which this class depends
         super(SignalGenerator, self).__init__()
-        
+        # Some parameters that are going to be needed in several functions are
+        # saved as class variables
         self.Fs = Fs
         self.nSamples = nSamples
         self.t = np.arange(0, ((1/self.Fs)*(self.nSamples)), (1/self.Fs))
+        # GenCarrier Function is called
         self.GenCarrier(Amp=Amplitude,
                         Fc=CarrFrequency,
                         phi=Phase,
                         Noise=CarrNoise)
+        # Depending on the waveform (sinsuoidal or square) the appropiate
+        # function is called to generate the modulation wave
         if ModType == 'sinusoidal':
             self.GenModulationSin(Amp=Amplitude,
-                                  ModFact=ModFactor, 
-                                  Fm=ModFrequency, 
+                                  ModFact=ModFactor,
+                                  Fm=ModFrequency,
                                   Noise=ModNoise)
         if ModType == 'square':
             self.GenModulationSqr(Amp=Amplitude,
-                                  ModFact=ModFactor, 
-                                  Fm=ModFrequency, 
+                                  ModFact=ModFactor,
+                                  Fm=ModFrequency,
                                   Noise=ModNoise)
-        
+
     def GenModulationSin(self, Amp, ModFact, Fm, Noise):
+        # The amplitude of the modulated signal is calculated as the ampitude
+        # of the carrier multiplied with the modulation factor
         AmpMod = Amp*ModFact
-        self.Modulation =AmpMod*np.cos(Fm*2*np.pi*(self.t))
-        self.ModulationNoise = self.Modulation + np.real(np.random.normal(0, 
-                                                                        Noise, 
-                                                                        self.Modulation.size
-                                                                        )
+        # The modulation signal is calculated as a cosinus waveform
+        self.Modulation = AmpMod*np.cos(Fm*2*np.pi*(self.t))
+        # a random noise is added to the signal
+        self.ModulationNoise = self.Modulation + np.real(np.random.normal(0,
+                                                                          Noise,
+                                                                          self.Modulation.size
+                                                                          )
                                                          )
-    def GenModulationSqr(self, Amp, ModFact, Fm, Noise):#Como hacerla cuadrada??
+        
+    def GenModulationSqr(self, Amp, ModFact, Fm, Noise):
+        # The amplitude of the modulated signal is calculated as the ampitude
+        # of the carrier multiplied with the modulation factor
         AmpMod = Amp*ModFact
-        self.Modulation =AmpMod*signal.square(Fm*2*np.pi*(self.t))
-        self.ModulationNoise = self.Modulation + np.real(np.random.normal(0, 
-                                                                        Noise, 
-                                                                        self.Modulation.size
-                                                                        )
+        # The modulation signal is calculated as a square waveform
+        self.Modulation = AmpMod*signal.square(Fm*2*np.pi*(self.t))
+        # a random noise is added to the signal
+        self.ModulationNoise = self.Modulation + np.real(np.random.normal(0,
+                                                                          Noise,
+                                                                          self.Modulation.size
+                                                                          )
                                                          )
+
     def GenCarrier(self, Amp, Fc, phi, Noise):
+        # The carrier signal is calculated as a cosinus waveform
         self.Carrier = Amp*np.cos(Fc*2*np.pi*(self.t))
-        self.CarrierNoise = self.Carrier + np.real(np.random.normal(0, 
-                                                                  Noise, 
-                                                                  self.Carrier.size
-                                                                  )
-                                                 )
+        # a random noise is added to the signal
+        self.CarrierNoise = self.Carrier + np.real(np.random.normal(0,
+                                                                    Noise,
+                                                                    self.Carrier.size
+                                                                    )
+                                                   )
+
     def StartGen(self):
+        # Signal is generated as the AM modulation of Carrier and modulation
+        # signals calculated before without noise
         self.Signal = (1+self.Modulation)*self.Carrier
+        # Signal is generated as the AM modulation of Carrier and modulation
+        # signals calculated before with noise
         self.SignalNoise = (1+self.ModulationNoise)*self.CarrierNoise
+        # Signal Done is emitted to notice generation thread that there is
+        # data ready to be read and processed
         self.SignalDone.emit()
-        
-    
-        
