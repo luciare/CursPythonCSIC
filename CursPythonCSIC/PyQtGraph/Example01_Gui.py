@@ -47,22 +47,34 @@ class MainWindow(Qt.QWidget):
                                            type='group',
                                            children=(self.SigParams,))
         # You can create variables of the main class with the values of
-        # an specific tree you have create in a concret GrouParameter class
+        # an specific tree you have created in a concret GroupParameter class
         self.GenParams = self.SigParams.param('GeneralConfig')
         self.CarrParams = self.SigParams.param('CarrierConfig')
         self.ModParams = self.SigParams.param('ModConfig')
 
 # ############################LockInConfig##############################
+        # It is added the tree of LockIn_Config to the actual GUI
         self.LockInParams = LockInConfig.LockIn_Config(QTparent=self,
                                                        name='LockIn Configuration')
+        # And its parameters are added to Parameters variable
         self.Parameters.addChild(self.LockInParams)
+        # A variable with LockInConfig parameters is created
         self.LockInConf = self.LockInParams.param('LockInConfig')
 # ############################LPFConfig##############################
+        # It is added the tree of LPFilterConfig to the actual GUI
         self.LPFParams = LPFilter.LPFilterConfig(QTparent=self,
                                                  name='LPF Configuration')
+        # And its parameters are added to Parameters variable
         self.Parameters.addChild(self.LPFParams) 
+        # A variable with LPFConfig parameters is created
         self.LPFConf = self.LPFParams.param('LPFConfig')
-# ############################Shared Configs##############################        
+# ############################Shared Configs##############################  
+        # It can be seen that some parameters of different trees are 
+        # the same, so they need to have the same value.
+        # To force a value in a parameter it is used the statement setValue
+        # With the form XX.param('param') you access to a concrete param value
+        # With the form self.XX.param.value() you acced to the value of a 
+        # SELF variable created in the XX class
         self.LockInConf.param('Fs').setValue(self.SigParams.Fs.value())
         self.LPFConf.param('Fs').setValue(self.SigParams.Fs.value())
 
@@ -77,8 +89,10 @@ class MainWindow(Qt.QWidget):
                                     self.SigParams.nSamples.value())
 
 # ############################Instancias for Changes######################
-        # This different function are used to execute a concrete function if
-        # there is any change in any variale of a concrete tree
+        # Statement sigValueChanged.connect is used to execute a function
+        # if the indicated value (param('param')) changes
+        # Statement sigTreeStateChanged.connect is used to execute a function
+        # if any parameter of the indicated tree changes
         self.CarrParams.param('CarrFrequency').sigValueChanged.connect(self.on_Fc_changed)
         self.GenParams.sigTreeStateChanged.connect(self.on_GenConfig_changed)
         self.CarrParams.sigTreeStateChanged.connect(self.on_CarrierConfig_changed)
@@ -86,7 +100,7 @@ class MainWindow(Qt.QWidget):
         self.LockInConf.param('OutFs').sigValueChanged.connect(self.on_OutFs_changed)
 
 # ############################GuiConfiguration##############################
-        # Is the same has before functions but for 'Parameters' variable,
+        # Is the same as before functions but for 'Parameters' variable,
         # which conatins all the trees of all the Gui, so on_Params_changed
         # will be execute for any change in the Gui
         self.Parameters.sigTreeStateChanged.connect(self.on_Params_changed)
@@ -128,16 +142,33 @@ class MainWindow(Qt.QWidget):
 
 # ############################Changes Emits##############################
     def on_Fc_changed(self):
+        '''
+        This function is used to change the Carrier Frequency value of 
+        Lock In tree to the same value specified in Signal Configuration tree
+
+        '''
         self.LockInConf.param(
                         'CarrFrequency').setValue(
                                          self.SigParams.CarrFreq.value())
 
     def on_OutFs_changed(self):
+        '''
+        This function is used to change the Cutoff Frequency value of 
+        Low pass filter tree to the same value specified in Lock In 
+        Configuration tree
+
+        '''
         self.LPFConf.param(
                      'CuttOffFreq').setValue(
                                     self.LockInParams.OutFs.value())
 
     def on_GenConfig_changed(self):
+        '''
+        This function is used to change the Sampling frequency value and 
+        nSamples value of Lock In and Low pass Filter trees to the ones
+        specified in the signal configuration
+
+        '''
         self.LockInConf.param('Fs').setValue(self.SigParams.Fs.value())
         self.LPFConf.param('Fs').setValue(self.SigParams.Fs.value())
         self.LockInConf.param(
@@ -203,13 +234,16 @@ class MainWindow(Qt.QWidget):
             # all the parameters and values of Signal configuration class is
             # saved in a class variable. This dictionary can be used as kwargs
             self.SignalConfigKwargs = self.SigParams.Get_SignalConf_Params()
-            # 
+            # The function Get_LockInConf_Params generates a dictioanry that
+            # is saved to pass to other functions as dictionary or kwargs
             self.LockInConfigKwargs = self.LockInParams.Get_LockInConf_Params()
-            #
+            # The function Get_LPF_Params generates a dictioanry that
+            # is saved to pass to other functions as dictionary or kwargs
             self.LPFConfigKwargs = self.LPFParams.Get_LPF_Params()
             # The dictionary is passed to the genration thread
             self.threadGeneration = SigGen.GenerationThread(self.SignalConfigKwargs)
-            #
+            # As LPF is used in Lock In process, both dictionaries are passed 
+            # to the LockIn Thread
             self.threadLockIn = LockIn.LockInThread(self.LockInConfigKwargs, 
                                                     self.LPFConfigKwargs)
             # the Qt signal of the generation thread is connected to a
@@ -259,6 +293,10 @@ class MainWindow(Qt.QWidget):
     def on_NewDemodSample(self):
         # Falta mostrat plot y PSD cuando javi los haga para 1
         print('demodDone')
+        # This signal is only used in this example due to the fact that 
+        # the generation is too fast, so it is impossible to acquire and 
+        # demodulate without loosing generated data, this signal is used to
+        # stop the generation of data until the lock in is ended
         self.threadGeneration.WaitLockInEnd = False
 
 # ############################MAIN##############################

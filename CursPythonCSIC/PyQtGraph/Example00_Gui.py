@@ -50,13 +50,13 @@ class MainWindow(Qt.QWidget):
         self.ModParams = self.SigParams.param('ModConfig')
 
 # ############################Instancias for Changes######################
-        # This different function are used to execute a concrete function if
-        # there is any change in any variale of a concrete tree
+        # Statement sigTreeStateChanged.connect is used to execute a function
+        # if any parameter of the indicated tree changes
         self.CarrParams.sigTreeStateChanged.connect(self.on_CarrierConfig_changed)
         self.ModParams.sigTreeStateChanged.connect(self.on_ModConfig_changed)
 
 # ############################GuiConfiguration##############################
-        # Is the same has before functions but for 'Parameters' variable,
+        # Is the same as before functions but for 'Parameters' variable,
         # which conatins all the trees of all the Gui, so on_Params_changed
         # will be execute for any change in the Gui
         self.Parameters.sigTreeStateChanged.connect(self.on_Params_changed)
