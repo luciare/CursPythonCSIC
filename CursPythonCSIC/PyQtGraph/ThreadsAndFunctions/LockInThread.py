@@ -51,6 +51,18 @@ class LockInThread(Qt.QThread):
                 Qt.QThread.msleep(10)
 
     def GenerateVcoiSignal(self, Fc):
+        '''
+        This function generates the local oscilator signal
+
+        Parameters
+        ----------
+        :param: Fc: Carrier Frequency (float)
+
+        Returns
+        -------
+        None.
+
+        '''
         # To have a complex Vcoi signal, the exponential form of a cosinues
         # is used to calculated de local oscilator signal
         step = 2*np.pi*(Fc/self.Fs)
@@ -58,6 +70,13 @@ class LockInThread(Qt.QThread):
         self.Vcoi = np.complex128(1*np.exp(1j*(step*np.arange(self.nSamples))))
     
     def LockInExec(self):
+        '''
+        This function is used to execute the lock in, the demodulation process
+        used in this case is called product detector and consist in the 
+        multiplication of AM signal and Vcoi to move AM signal to BandBase
+        and apply a low pass filter to eliminate high frequency component
+
+        '''
         # To move acquired signal to BaseBand it is multiplied with the Vcoi
         # to avoid errors in the demodulation process due to phase differences
         # between Vcoi and the acquired signal, real and imaginary parts 
@@ -84,6 +103,18 @@ class LockInThread(Qt.QThread):
         self.ToDemData = None
 
     def AddData(self, NewData):
+        '''
+        This function is used to add data to the lock in process
+
+        Parameters
+        ----------
+        :param: NewData: Data to demodulate (Array)
+
+        Returns
+        -------
+        None.
+
+        '''
         # If data is coming in while the LockIn is still in process, an erro
         # notification is printed
         if self.ToDemData is not None:
