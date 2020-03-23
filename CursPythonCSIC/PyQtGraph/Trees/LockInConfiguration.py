@@ -51,27 +51,55 @@ LockInParams = ({'name': 'LockInConfig',
 
 class LockIn_Config(pTypes.GroupParameter):
     def __init__(self, **kwargs):
-        pTypes.GroupParameter.__init__(self, **kwargs)
 
+        pTypes.GroupParameter.__init__(self, **kwargs)
+        # Add General Configuration Tree 
         self.addChild(LockInParams)
         self.LockInConfig = self.param('LockInConfig')
-
+        # And assign its variables
         self.nSamples = self.LockInConfig.param('nSamples')
         self.Fs = self.LockInConfig.param('Fs')
         self.DSFact = self.LockInConfig.param('DSFact')
         self.OutFs = self.LockInConfig.param('OutFs')
         self.OutType = self.LockInConfig.param('OutType')
-
+        # Link the change of a value of the tree to a function
         self.LockInConfig.sigTreeStateChanged.connect(self.on_LockIn_changed)
+        # Call the on_XX functions to initialize correctly the variable
         self.on_LockIn_changed()
 
     def on_LockIn_changed(self):
+        '''
+        This function is used to ensure that the modulus between the number
+        os samples of the array generated and the DSFact is equal to 0, so 
+        the Array can be sliced DSFact times without loosing any data
+        Alos OutFs is calculated as the division of Fs and DSFact
+
+        Returns
+        -------
+        None.
+
+        '''
         while self.nSamples.value() % self.DSFact.value() != 0:
             self.DSFact.setValue(self.DSFact.value()+1)
         OutFs = self.Fs.value()/self.DSFact.value()
         self.OutFs.setValue(OutFs)
 
     def Get_LockInConf_Params(self):
+        '''
+        This function returns a dictionary conatining all the information
+        related with the configurations set in the different signal trees
+
+        Returns
+        -------
+        :return: A Dictionary with the data arranged as follows:
+        LockInConf={'nSamples': 20000.0,
+                    'CarrFrequency': 30000.0,
+                    'Fs': 2000000.0,
+                    'DSFact': 100,
+                    'OutFs': 20000.0,
+                    'OutType': 'Abs'
+                    }
+        '''
         LockInConf = {}
         for LockInParams in self.LockInConfig.children():
             LockInConf[LockInParams.name()] = LockInParams.value()

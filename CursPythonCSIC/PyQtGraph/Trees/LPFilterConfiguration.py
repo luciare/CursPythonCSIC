@@ -39,15 +39,30 @@ LPFilterParams = ({'name': 'LPFConfig',
 class LPFilterConfig(pTypes.GroupParameter):
     def __init__(self, **kwargs):
         pTypes.GroupParameter.__init__(self, **kwargs)
-
+        # Add General Configuration Tree 
         self.addChild(LPFilterParams)
         self.LPFConf = self.param('LPFConfig')
-
+        # And assign its variables
         self.Fs = self.LPFConf.param('Fs')
         self.btype = self.LPFConf.param('btype')
         self.Order = self.LPFConf.param('Order')
 
     def Get_LPF_Params(self):
+        '''
+        This function returns a dictionary conatining all the information
+        related with the configurations set in the different signal trees
+
+        Returns
+        -------
+        :return: A Dictionary with the data arranged as follows:
+        LPF={'nSamples': 20000.0,
+             'CarrFrequency': 30000.0,
+             'Fs': 2000000.0,
+             'DSFact': 100,
+             'OutFs': 20000.0,
+             'OutType': 'Abs'
+             }
+        '''
         LPF = {}
         for LPFParams in self.LPFConf.children():
             LPF[LPFParams.name()] = LPFParams.value()
