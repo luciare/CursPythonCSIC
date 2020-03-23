@@ -293,11 +293,6 @@ class MainWindow(Qt.QWidget):
     def on_NewDemodSample(self):
         # Falta mostrat plot y PSD cuando javi los haga para 1
         print('demodDone')
-        # This signal is only used in this example due to the fact that 
-        # the generation is too fast, so it is impossible to acquire and 
-        # demodulate without loosing generated data, this signal is used to
-        # stop the generation of data until the lock in is ended
-        self.threadGeneration.WaitLockInEnd = False
 
 # ############################MAIN##############################
 
