@@ -55,12 +55,10 @@ class LPFilterConfig(pTypes.GroupParameter):
         Returns
         -------
         :return: A Dictionary with the data arranged as follows:
-        LPF={'nSamples': 20000.0,
-             'CarrFrequency': 30000.0,
-             'Fs': 2000000.0,
-             'DSFact': 100,
-             'OutFs': 20000.0,
-             'OutType': 'Abs'
+        LPF={'Fs': 2000000.0,
+             'CuttOffFreq': 20000.0,
+             'btype': 'lowpass',
+             'Order': 2
              }
         '''
         LPF = {}

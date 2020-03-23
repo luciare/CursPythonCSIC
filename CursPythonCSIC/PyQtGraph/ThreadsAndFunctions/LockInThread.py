@@ -15,6 +15,35 @@ class LockInThread(Qt.QThread):
     NewDemodData = Qt.pyqtSignal()
 
     def __init__(self, LockInConfig, LPFilterConfig):
+        '''
+        Initialation of the Thread for LockIn
+
+        Parameters
+        ----------
+        :param LockInConfig: dictionary, contains all variables related with
+                             lock in configuration
+        LockInConfig : dictionary
+                       {'nSamples': 20000.0,
+                        'CarrFrequency': 30000.0,
+                        'Fs': 2000000.0,
+                        'DSFact': 100,
+                        'OutFs': 20000.0,
+                        'OutType': 'Abs'
+                       }
+        :param LPFilterConfig: dictionary, contains all variables related with
+                               Low pass filter configuration
+        LPFilterConfig : dictionary
+                       {'Fs': 2000000.0,
+                        'CuttOffFreq': 20000.0,
+                        'btype': 'lowpass',
+                        'Order': 2
+                        }
+
+        Returns
+        -------
+        None.
+
+        '''
         # super permits to initialize the classes from which this class depends
         super(LockInThread, self).__init__()
         # The dictionary LPFilterConfig is passed to LowPassFilter class as
