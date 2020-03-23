@@ -150,7 +150,10 @@ class MainWindow(Qt.QWidget):
         self.LockInConf.param(
                         'CarrFrequency').setValue(
                                          self.SigParams.CarrFreq.value())
-
+        if self.threadLockIn is not None:
+            self.threadLockIn.LockIn.GenerateVcoiSignal(
+                                     self.SigParams.CarrFreq.value())
+            
     def on_OutFs_changed(self):
         '''
         This function is used to change the Cutoff Frequency value of 
@@ -185,11 +188,7 @@ class MainWindow(Qt.QWidget):
         if self.threadGeneration is not None:
             # Gen Carrier function is called and appropiate parameters are
             # sent to generate the new waveform
-            self.threadGeneration.SigGen.GenCarrier(Amp=self.CarrParams.param('Amplitude').value(),
-                                                    Fc=self.CarrParams.param('CarrFrequency').value(), 
-                                                    phi=self.CarrParams.param('Phase').value(), 
-                                                    Noise=self.CarrParams.param('CarrNoise').value()
-                                                    )
+            SigGen.GenAMSignal(**self.SigParams.Get_SignalConf_Params())
 
     def on_ModConfig_changed(self):
         '''
