@@ -38,7 +38,6 @@ def GenAMSignal(Fs, nSamples, Amplitude, CarrFrequency, CarrNoise, Phase,
 
         # Some parameters that are going to be needed in several functions are
         # saved as class variables
-
         t = np.arange(0, ((1/Fs)*(nSamples)), (1/Fs))
         # The amplitude of the modulated signal is calculated as the ampitude
         # of the carrier multiplied with the modulation factor
@@ -138,6 +137,9 @@ class GenerationThread(Qt.QThread):
             # kwargs, this means you can send the full dictionary and only use
             # the variables in which you are interesed in
             self.OutData = GenAMSignal(**self.SigConfigKwargs)
+            self.OutDataReShape = np.reshape(self.OutData,
+                                             (self.OutData.size, 1)
+                                             )
             self.NewGenData.emit()
 
             Qt.QThread.msleep(self.tInterrupt)

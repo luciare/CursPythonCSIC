@@ -18,6 +18,7 @@ from pyqtgraph.parametertree import Parameter, ParameterTree
 import Trees.SignalConfiguration as SigConfig
 import ThreadsAndFunctions.SignalGeneration as SigGen
 
+import PyqtTools.FileModule as FileMod
 import PyqtTools.PlotModule as PltMod
 
 class MainWindow(Qt.QWidget):
@@ -33,27 +34,56 @@ class MainWindow(Qt.QWidget):
         self.btnStart = Qt.QPushButton("Start Gen and Adq!")
         layout.addWidget(self.btnStart)
 
+# #############################Save##############################
+        self.SaveStateParams = FileMod.SaveSateParameters(QTparent=self,
+                                                          name='State')
+        # With this line, it is initize the group of parameters that are
+        # going to be part of the full GUI
+        self.Parameters = Parameter.create(name='params',
+                                           type='group',
+                                           children=(self.SaveStateParams,))
+# #############################File##############################
+        self.FileParams = FileMod.SaveFileParameters(QTparent=self,
+                                                     name='Record File')
+        self.Parameters.addChild(self.FileParams)
+
 # ############################SignalConfig##############################
         # QTparent indicades that is going to be added a tree in the actual
         # GUI that has already been created.
         # Name is the name that you want as title of your tree in the GUI
         self.SigParams = SigConfig.SignalConfig(QTparent=self,
                                                 name='Signal Configuration')
-        # With this line, it is initize the group of parameters that are
-        # going to be part of the full GUI
-        self.Parameters = Parameter.create(name='params',
-                                           type='group',
-                                           children=(self.SigParams,))
+
         # You can create variables of the main class with the values of
         # an specific tree you have create in a concret GrouParameter class
+        self.GenParams = self.SigParams.param('GeneralConfig')
         self.CarrParams = self.SigParams.param('CarrierConfig')
         self.ModParams = self.SigParams.param('ModConfig')
 
+# #############################Plots##############################
+        self.PsdPlotParams = PltMod.PSDParameters(name='PSD Plot Options')
+        self.PsdPlotParams.param('Fs').setValue(self.SigParams.Fs.value())
+        self.PsdPlotParams.param('Fmin').setValue(50)
+        self.PsdPlotParams.param('nAvg').setValue(50)
+        self.Parameters.addChild(self.PsdPlotParams)
+
+        self.PlotParams = PltMod.PlotterParameters(name='Plot options')
+        self.PlotParams.SetChannels({'Row1': 0,})
+        self.PlotParams.param('Fs').setValue(self.SigParams.Fs.value())
+
+        self.Parameters.addChild(self.PlotParams)
+        
 # ############################Instancias for Changes######################
         # Statement sigTreeStateChanged.connect is used to execute a function
         # if any parameter of the indicated tree changes
+        self.GenParams.sigTreeStateChanged.connect(self.on_GenConfig_changed)
         self.CarrParams.sigTreeStateChanged.connect(self.on_CarrierConfig_changed)
         self.ModParams.sigTreeStateChanged.connect(self.on_ModConfig_changed)
+        
+        self.PlotParams.param('PlotEnable').sigValueChanged.connect(self.on_PlotEnable_changed)
+        self.PlotParams.param('RefreshTime').sigValueChanged.connect(self.on_RefreshTimePlt_changed)
+        self.PlotParams.param('ViewTime').sigValueChanged.connect(self.on_SetViewTimePlt_changed)
+        self.PsdPlotParams.param('PSDEnable').sigValueChanged.connect(self.on_PSDEnable_changed)
 
 # ############################GuiConfiguration##############################
         # Is the same as before functions but for 'Parameters' variable,
@@ -96,6 +126,21 @@ class MainWindow(Qt.QWidget):
         print('  ----------')
 
 # ############################Changes Emits##############################
+    def on_GenConfig_changed(self):
+        '''
+        This function is used to change the Sampling frequency value and 
+        nSamples value of Lock In and Low pass Filter trees to the ones
+        specified in the signal configuration
+
+        '''
+        self.LockInConf.param('Fs').setValue(self.SigParams.Fs.value())
+        self.LPFConf.param('Fs').setValue(self.SigParams.Fs.value())
+        self.PlotParams.param('Fs').setValue(self.SigParams.Fs.value())
+        self.PsdPlotParams.param('Fs').setValue(self.SigParams.Fs.value())
+
+        self.LockInConf.param(
+                        'nSamples').setValue(
+                                    self.SigParams.nSamples.value())
     def on_CarrierConfig_changed(self):
         '''
         This function is used to change the Carrier parameters while the
@@ -106,11 +151,7 @@ class MainWindow(Qt.QWidget):
         if self.threadGeneration is not None:
             # Gen Carrier function is called and appropiate parameters are
             # sent to generate the new waveform
-            self.threadGeneration.SigGen.GenCarrier(Amp=self.CarrParams.param('Amplitude').value(),
-                                                    Fc=self.CarrParams.param('CarrFrequency').value(), 
-                                                    phi=self.CarrParams.param('Phase').value(), 
-                                                    Noise=self.CarrParams.param('CarrNoise').value()
-                                                    )
+            SigGen.GenAMSignal(**self.SigParams.Get_SignalConf_Params())
 
     def on_ModConfig_changed(self):
         '''
@@ -124,22 +165,30 @@ class MainWindow(Qt.QWidget):
                 # GenModulation for a sinusoidal waveform function is called
                 # and appropiate parameters are sent to generate the new
                 # waveform
-                self.threadGeneration.SigGen.GenModulationSin(Amp=self.CarrParams.param('Amplitude').value(),
-                                                              ModFact=self.ModParams.param('ModFactor').value(),
-                                                              Fm=self.ModParams.param('ModFrequency').value(), 
-                                                              Noise=self.ModParams.param('ModNoise').value()
-                                                              )
+                SigGen.GenAMSignal(**self.SigParams.Get_SignalConf_Params())
 
             if self.ModParams.param('ModType').value() == 'square':
                 # GenModulation for an square waveform function is called
                 # and appropiate parameters are sent to generate the new
                 # waveform
-                self.threadGeneration.SigGen.GenModulationSqr(Amp=self.CarrParams.param('Amplitude').value(),
-                                                              ModFact=self.ModParams.param('ModFactor').value(), 
-                                                              Fm=self.ModParams.param('ModFrequency').value(), 
-                                                              Noise=self.ModParams.param('ModNoise').value()
-                                                              )
-       
+                SigGen.GenAMSignal(**self.SigParams.Get_SignalConf_Params())
+
+    def on_PSDEnable_changed(self):
+        if self.threadAqc is not None:
+            self.Gen_Destroy_PsdPlotter()
+
+    def on_PlotEnable_changed(self):
+        if self.threadAqc is not None:
+            self.Gen_Destroy_Plotters()
+
+    def on_RefreshTimePlt_changed(self):
+        if self.threadPlotter is not None:
+            self.threadPlotter.SetRefreshTime(self.PlotParams.param('RefreshTime').value())
+
+    def on_SetViewTimePlt_changed(self):
+        if self.threadPlotter is not None:
+            self.threadPlotter.SetViewTime(self.PlotParams.param('ViewTime').value())
+
 # ############################START##############################
     def on_btnStart(self):
         '''
@@ -161,6 +210,10 @@ class MainWindow(Qt.QWidget):
             # function (on_NewSample) so, when the thread emits this signal
             # the specified function will be executed
             self.threadGeneration.NewGenData.connect(self.on_NewSample)
+
+            self.Gen_Destroy_PsdPlotter()
+            self.Gen_Destroy_Plotters()
+            self.SaveFiles()
             # The thread is started, so run function is executed in loop
             self.threadGeneration.start()
 
@@ -177,6 +230,15 @@ class MainWindow(Qt.QWidget):
             # Thread is terminated and set to None
             self.threadGeneration.terminate()
             self.threadGeneration = None
+
+            if self.threadPlotter is not None:
+                self.threadPlotter.stop()
+                self.threadPlotter = None
+
+            if self.threadPsdPlotter is not None:
+                self.threadPsdPlotter.stop()
+                self.threadPsdPlotter = None
+
             # Button text is changed again
             self.btnStart.setText("Start Gen and Adq!")
 
@@ -192,9 +254,54 @@ class MainWindow(Qt.QWidget):
         self.OldTime = time.time()
         # period is printed in the console
         print('Sample time', Ts)
+        # Falta mostrat plot y PSD cuando javi los haga para 1
+        if self.threadPlotter is not None:
+            self.threadPlotter.AddData(self.threadGeneration.OutDataReShape)
 
-         # Falta mostrat plot y PSD cuando javi los haga para 1
+        if self.threadPsdPlotter is not None:
+            self.threadPsdPlotter.AddData(self.threadGeneration.OutDataReShape)
 
+    def Gen_Destroy_Plotters(self):
+        if self.threadPlotter is None:
+            if self.PlotParams.param('PlotEnable').value() is True:
+                PlotterKwargs = self.PlotParams.GetParams()
+                self.threadPlotter = PltMod.Plotter(**PlotterKwargs)
+                self.threadPlotter.start()
+        if self.threadPlotter is not None:
+            if self.PlotParams.param('PlotEnable').value() is False:
+                self.threadPlotter.stop()
+                self.threadPlotter = None
+
+    def Gen_Destroy_PsdPlotter(self):
+        if self.threadPsdPlotter is None:
+            if self.PsdPlotParams.param('PSDEnable').value() is True:
+                PlotterKwargs = self.PlotParams.GetParams()
+                self.threadPsdPlotter = PltMod.PSDPlotter(ChannelConf=PlotterKwargs['ChannelConf'],
+                                                          nChannels=1,
+                                                          **self.PsdPlotParams.GetParams())
+                self.threadPsdPlotter.start()
+        if self.threadPsdPlotter is not None:
+            if self.PsdPlotParams.param('PSDEnable').value() is False:
+                self.threadPsdPlotter.stop()
+                self.threadPsdPlotter = None
+
+# #############################Savind Files##############################
+    def SaveFiles(self):
+        FileName = self.FileParams.param('File Path').value()
+        if FileName == '':
+            print('No file')
+        else:
+            if os.path.isfile(FileName):
+                print('Remove File')
+                os.remove(FileName)
+            MaxSize = self.FileParams.param('MaxSize').value()
+            self.threadDemodSave = FileMod.DataSavingThread(FileName=FileName,
+                                                            nChannels=1,
+                                                            MaxSize=MaxSize,
+                                                            Fs = self.SigParams.Fs.value(),
+                                                            dtype='float')
+
+            self.threadDemodSave.start()
 
 # ############################MAIN##############################
 
