@@ -121,7 +121,7 @@ class Buffer2D(np.ndarray):
         self.totalind += newsize
 
     def IsFilled(self):
-                '''
+        '''
         This functions gives an event when the buffer is empty and it is ready 
         to do the data calculations
         Paramenters
