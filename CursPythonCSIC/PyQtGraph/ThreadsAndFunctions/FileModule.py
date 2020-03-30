@@ -162,9 +162,10 @@ class FileBuffer():
 
 class DataSavingThread(Qt.QThread):
     def __init__(self, FileName, nChannels, Fs=None, ChnNames=None, 
-                 MaxSize=None, dtype='float'):
+                 MaxSize=None, tWait=10, dtype='float'):
         super(DataSavingThread, self).__init__()
         self.NewData = None
+        self.tWait = tWait
         self.FileBuff = FileBuffer(FileName=FileName,
                                    nChannels=nChannels,
                                    MaxSize=MaxSize,
@@ -177,7 +178,7 @@ class DataSavingThread(Qt.QThread):
                 self.FileBuff.AddSample(self.NewData)
                 self.NewData = None
             else:
-                Qt.QThread.msleep(10)
+                Qt.QThread.msleep(self.tWait)
 
     def AddData(self, NewData):
         if self.NewData is not None:

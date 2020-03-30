@@ -152,6 +152,7 @@ class MainWindow(Qt.QWidget):
         self.threadLockIn = None
         self.threadPlotter = None
         self.threadPsdPlotter = None
+        self.threadDemodSave = None
 
 # ############################Changes Control##############################
     def on_Params_changed(self, param, changes):
@@ -206,6 +207,10 @@ class MainWindow(Qt.QWidget):
         '''
         self.LockInConf.param('Fs').setValue(self.SigParams.Fs.value())
         self.LPFConf.param('Fs').setValue(self.SigParams.Fs.value())
+        
+        self.PlotParams.param('Fs').setValue(self.LockInParams.OutFs.value())
+        self.PsdPlotParams.param('Fs').setValue(self.LockInParams.OutFs.value())
+        
         self.LockInConf.param(
                         'nSamples').setValue(
                                     self.SigParams.nSamples.value())
@@ -336,9 +341,9 @@ class MainWindow(Qt.QWidget):
                 self.threadPsdPlotter.stop()
                 self.threadPsdPlotter = None
             # Also save thread is stopped
-            if self.threadSave is not None:
-                self.threadSave.stop()
-                self.threadSave = None
+            if self.threadDemodSave is not None:
+                self.threadDemodSave.stop()
+                self.threadDemodSave = None
                 
             # Button text is changed again
             self.btnStart.setText("Start Gen and Adq!")
@@ -360,9 +365,11 @@ class MainWindow(Qt.QWidget):
         # to read noisy signal
         # self.threadLockIn.AddData(NewData=self.threadGeneration.OutNoiseData)
 
-    def on_NewDemodSample(self):
-        
+    def on_NewDemodSample(self): 
         print('demodDone')
+        if self.threadDemodSave is not None:
+            self.threadDemodSave.AddData(self.threadLockIn.OutDemodData)
+            
         if self.threadPlotter is not None:
             self.threadPlotter.AddData(self.threadLockIn.OutDemodDataReShape)
 
@@ -438,6 +445,7 @@ class MainWindow(Qt.QWidget):
                                                             nChannels=1,
                                                             MaxSize=MaxSize,
                                                             Fs = self.SigParams.Fs.value(),
+                                                            tWait=self.SigParams.tInterrput.value(),
                                                             dtype='float')
             # And then started
             self.threadDemodSave.start()

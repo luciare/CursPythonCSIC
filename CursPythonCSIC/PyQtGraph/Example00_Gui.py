@@ -106,6 +106,7 @@ class MainWindow(Qt.QWidget):
         self.threadGeneration = None
         self.threadPlotter = None
         self.threadPsdPlotter = None
+        self.threadSave = None
 
 # ############################Changes Control##############################
     def on_Params_changed(self, param, changes):
@@ -248,6 +249,7 @@ class MainWindow(Qt.QWidget):
             # stopped is printed in the console
             print('Stopped')
             # Thread is terminated and set to None
+            self.threadGeneration.NewGenData.disconnect()
             self.threadGeneration.terminate()
             self.threadGeneration = None
             # Plot and PSD threads are stopped
@@ -258,6 +260,7 @@ class MainWindow(Qt.QWidget):
             if self.threadPsdPlotter is not None:
                 self.threadPsdPlotter.stop()
                 self.threadPsdPlotter = None
+                
             # Also save thread is stopped
             if self.threadSave is not None:
                 self.threadSave.stop()
@@ -277,7 +280,9 @@ class MainWindow(Qt.QWidget):
         self.OldTime = time.time()
         # period is printed in the console
         print('Sample time', Ts)
-        
+        if self.threadSave is not None:
+            self.threadSave.AddData(self.threadGeneration.OutDataReShape)
+            
         if self.threadPlotter is not None:
             self.threadPlotter.AddData(self.threadGeneration.OutDataReShape)
 
@@ -349,13 +354,14 @@ class MainWindow(Qt.QWidget):
             # Maximum size alowed for the new file is obtained from the GUI
             MaxSize = self.FileParams.param('MaxSize').value()
             # The threas is initialized
-            self.threadDemodSave = FileMod.DataSavingThread(FileName=FileName,
-                                                            nChannels=1,
-                                                            MaxSize=MaxSize,
-                                                            Fs = self.SigParams.Fs.value(),
-                                                            dtype='float')
+            self.threadSave = FileMod.DataSavingThread(FileName=FileName,
+                                                       nChannels=1,
+                                                       MaxSize=MaxSize,
+                                                       Fs = self.SigParams.Fs.value(),
+                                                       tWait=self.SigParams.tInterrput.value(),
+                                                       dtype='float')
             # And then started
-            self.threadDemodSave.start()
+            self.threadSave.start()
 
 # ############################MAIN##############################
 
