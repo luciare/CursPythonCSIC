@@ -14,7 +14,7 @@ import ThreadsAndFunctions.LockInClass as LockInClass
 class LockInThread(Qt.QThread):
     NewDemodData = Qt.pyqtSignal()
 
-    def __init__(self, LockInConfig, LPFilterConfig):
+    def __init__(self, LockInConfig, LPFilterConfig, tWait=10):
         '''
         Initialation of the Thread for LockIn
 
@@ -49,6 +49,8 @@ class LockInThread(Qt.QThread):
         
         self.LockIn = LockInClass.LockIn(LockInConfig, LPFilterConfig)
         self.ToDemData = None
+        
+        self.tWait = tWait
 
         
     def run(self):
@@ -74,7 +76,7 @@ class LockInThread(Qt.QThread):
                 self.ToDemData = None
 
             else:
-                Qt.QThread.msleep(10)
+                Qt.QThread.msleep(self.tWait)
     
     def AddData(self, NewData):
         '''

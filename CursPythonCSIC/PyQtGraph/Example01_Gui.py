@@ -304,7 +304,9 @@ class MainWindow(Qt.QWidget):
             # As LPF is used in Lock In process, both dictionaries are passed 
             # to the LockIn Thread
             self.threadLockIn = LockIn.LockInThread(self.LockInConfigKwargs, 
-                                                    self.LPFConfigKwargs)
+                                                    self.LPFConfigKwargs,
+                                                    tWait=self.SigParams.tInterrput.value()
+                                                    )
             # the Qt signal of the generation thread is connected to a
             # function (on_NewSample) so, when the thread emits this signal
             # the specified function will be executed
@@ -330,6 +332,8 @@ class MainWindow(Qt.QWidget):
             # stopped is printed in the console
             print('Stopped')
             # Thread is terminated and set to None
+            self.threadGeneration.NewGenData.disconnect()
+            self.threadLockIn.NewDemodData.disconnect()
             self.threadGeneration.terminate()
             self.threadGeneration = None
             self.threadLockIn = None
@@ -368,7 +372,7 @@ class MainWindow(Qt.QWidget):
     def on_NewDemodSample(self): 
         print('demodDone')
         if self.threadDemodSave is not None:
-            self.threadDemodSave.AddData(self.threadLockIn.OutDemodData)
+            self.threadDemodSave.AddData(self.threadLockIn.OutDemodDataReShape)
             
         if self.threadPlotter is not None:
             self.threadPlotter.AddData(self.threadLockIn.OutDemodDataReShape)
