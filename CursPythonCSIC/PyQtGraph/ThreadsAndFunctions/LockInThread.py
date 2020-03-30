@@ -67,6 +67,9 @@ class LockInThread(Qt.QThread):
             # the generation is started
             if self.ToDemData is not None:
                 self.OutDemodData = self.LockIn.LockInExec(self.ToDemData)
+                self.OutDemodDataReShape = np.reshape(self.OutDemodData,
+                                             (self.OutDemodData.size, 1)
+                                             )
                 self.NewDemodData.emit()
                 self.ToDemData = None
 

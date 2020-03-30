@@ -277,7 +277,7 @@ class MainWindow(Qt.QWidget):
         self.OldTime = time.time()
         # period is printed in the console
         print('Sample time', Ts)
-        # Falta mostrat plot y PSD cuando javi los haga para 1
+        
         if self.threadPlotter is not None:
             self.threadPlotter.AddData(self.threadGeneration.OutDataReShape)
 

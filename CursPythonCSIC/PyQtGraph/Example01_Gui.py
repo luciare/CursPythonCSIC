@@ -21,6 +21,10 @@ import Trees.LockInConfiguration as LockInConfig
 import ThreadsAndFunctions.LockInThread as LockIn
 import Trees.LPFilterConfiguration as LPFilter
 
+import ThreadsAndFunctions.FileModule as FileMod
+import ThreadsAndFunctions.TimePlot as TimePlt
+import ThreadsAndFunctions.PSDPlot as PSDPlt
+
 
 class MainWindow(Qt.QWidget):
     ''' Main Window '''
@@ -34,6 +38,18 @@ class MainWindow(Qt.QWidget):
         # Qt.QPushButton is used to generate a button in the GUI
         self.btnStart = Qt.QPushButton("Start Gen and Adq!")
         layout.addWidget(self.btnStart)
+# #############################Save##############################
+        self.SaveStateParams = FileMod.SaveTreeSateParameters(QTparent=self,
+                                                              name='State')
+        # With this line, it is initize the group of parameters that are
+        # going to be part of the full GUI
+        self.Parameters = Parameter.create(name='params',
+                                           type='group',
+                                           children=(self.SaveStateParams,))
+# #############################File##############################
+        self.FileParams = FileMod.SaveFileParameters(QTparent=self,
+                                                     name='Record File')
+        self.Parameters.addChild(self.FileParams)
 
 # ############################SignalConfig##############################
         # QTparent indicades that is going to be added a tree in the actual
@@ -41,11 +57,7 @@ class MainWindow(Qt.QWidget):
         # Name is the name that you want as title of your tree in the GUI
         self.SigParams = SigConfig.SignalConfig(QTparent=self,
                                                 name='Signal Configuration')
-        # With this line, it is initize the group of parameters that are
-        # going to be part of the full GUI
-        self.Parameters = Parameter.create(name='params',
-                                           type='group',
-                                           children=(self.SigParams,))
+        self.Parameters.addChild(self.SigParams)
         # You can create variables of the main class with the values of
         # an specific tree you have created in a concret GroupParameter class
         self.GenParams = self.SigParams.param('GeneralConfig')
@@ -60,6 +72,7 @@ class MainWindow(Qt.QWidget):
         self.Parameters.addChild(self.LockInParams)
         # A variable with LockInConfig parameters is created
         self.LockInConf = self.LockInParams.param('LockInConfig')
+        
 # ############################LPFConfig##############################
         # It is added the tree of LPFilterConfig to the actual GUI
         self.LPFParams = LPFilter.LPFilterConfig(QTparent=self,
@@ -68,6 +81,17 @@ class MainWindow(Qt.QWidget):
         self.Parameters.addChild(self.LPFParams) 
         # A variable with LPFConfig parameters is created
         self.LPFConf = self.LPFParams.param('LPFConfig')
+        
+# #############################Plots##############################
+        self.PsdPlotParams = PSDPlt.PSDParameters(name='PSD Plot Options')      
+        self.PsdPlotParams.param('Fmin').setValue(50)
+        self.PsdPlotParams.param('nAvg').setValue(50)
+        self.Parameters.addChild(self.PsdPlotParams)
+
+        self.PlotParams = TimePlt.PlotterParameters(name='Plot options')
+        self.PlotParams.SetChannels({'Row1': 0,})
+        self.Parameters.addChild(self.PlotParams)
+        
 # ############################Shared Configs##############################  
         # It can be seen that some parameters of different trees are 
         # the same, so they need to have the same value.
@@ -77,6 +101,9 @@ class MainWindow(Qt.QWidget):
         # SELF variable created in the XX class
         self.LockInConf.param('Fs').setValue(self.SigParams.Fs.value())
         self.LPFConf.param('Fs').setValue(self.SigParams.Fs.value())
+        
+        self.PlotParams.param('Fs').setValue(self.LockInParams.OutFs.value())
+        self.PsdPlotParams.param('Fs').setValue(self.LockInParams.OutFs.value())
 
         self.LockInConf.param(
                         'CarrFrequency').setValue(
@@ -98,6 +125,11 @@ class MainWindow(Qt.QWidget):
         self.CarrParams.sigTreeStateChanged.connect(self.on_CarrierConfig_changed)
         self.ModParams.sigTreeStateChanged.connect(self.on_ModConfig_changed)
         self.LockInConf.param('OutFs').sigValueChanged.connect(self.on_OutFs_changed)
+        
+        self.PlotParams.param('PlotEnable').sigValueChanged.connect(self.on_PlotEnable_changed)
+        self.PlotParams.param('RefreshTime').sigValueChanged.connect(self.on_RefreshTimePlt_changed)
+        self.PlotParams.param('ViewTime').sigValueChanged.connect(self.on_SetViewTimePlt_changed)
+        self.PsdPlotParams.param('PSDEnable').sigValueChanged.connect(self.on_PSDEnable_changed)
 
 # ############################GuiConfiguration##############################
         # Is the same as before functions but for 'Parameters' variable,
@@ -202,22 +234,45 @@ class MainWindow(Qt.QWidget):
                 # GenModulation for a sinusoidal waveform function is called
                 # and appropiate parameters are sent to generate the new
                 # waveform
-                self.threadGeneration.SigGen.GenModulationSin(Amp=self.CarrParams.param('Amplitude').value(),
-                                                              ModFact=self.ModParams.param('ModFactor').value(),
-                                                              Fm=self.ModParams.param('ModFrequency').value(), 
-                                                              Noise=self.ModParams.param('ModNoise').value()
-                                                              )
+                SigGen.GenAMSignal(**self.SigParams.Get_SignalConf_Params())
 
             if self.ModParams.param('ModType').value() == 'square':
                 # GenModulation for an square waveform function is called
                 # and appropiate parameters are sent to generate the new
                 # waveform
-                self.threadGeneration.SigGen.GenModulationSqr(Amp=self.CarrParams.param('Amplitude').value(),
-                                                              ModFact=self.ModParams.param('ModFactor').value(), 
-                                                              Fm=self.ModParams.param('ModFrequency').value(), 
-                                                              Noise=self.ModParams.param('ModNoise').value()
-                                                              )
-       
+                SigGen.GenAMSignal(**self.SigParams.Get_SignalConf_Params())
+
+    def on_PSDEnable_changed(self):
+        '''
+        This function is used to Generate or destroy the PSD plot
+
+        '''
+        if self.threadGeneration is not None:
+            self.Gen_Destroy_PsdPlotter()
+
+    def on_PlotEnable_changed(self):
+        '''
+        This function is used to Generate or destroy the Time plot
+
+        '''
+        if self.threadGeneration is not None:
+            self.Gen_Destroy_Plotters()
+
+    def on_RefreshTimePlt_changed(self):
+        '''
+        This function is used to change the refresh time of Time Plot
+
+        '''
+        if self.threadPlotter is not None:
+            self.threadPlotter.SetRefreshTime(self.PlotParams.param('RefreshTime').value())
+
+    def on_SetViewTimePlt_changed(self):
+        '''
+        This function is used to change the View time of Time Plot
+
+        '''
+        if self.threadPlotter is not None:
+            self.threadPlotter.SetViewTime(self.PlotParams.param('ViewTime').value()) 
 # ############################START##############################
     def on_btnStart(self):
         '''
@@ -250,6 +305,11 @@ class MainWindow(Qt.QWidget):
             # the specified function will be executed
             self.threadGeneration.NewGenData.connect(self.on_NewSample)
             self.threadLockIn.NewDemodData.connect(self.on_NewDemodSample)
+            # Time and PSD Plots threads are initialized and started
+            self.Gen_Destroy_PsdPlotter()
+            self.Gen_Destroy_Plotters()
+            # Also save thread is initialize and started
+            self.SaveFiles()
             # The thread is started, so run function is executed in loop
             self.threadGeneration.start()
             self.threadLockIn.start()
@@ -268,6 +328,18 @@ class MainWindow(Qt.QWidget):
             self.threadGeneration.terminate()
             self.threadGeneration = None
             self.threadLockIn = None
+            if self.threadPlotter is not None:
+                self.threadPlotter.stop()
+                self.threadPlotter = None
+
+            if self.threadPsdPlotter is not None:
+                self.threadPsdPlotter.stop()
+                self.threadPsdPlotter = None
+            # Also save thread is stopped
+            if self.threadSave is not None:
+                self.threadSave.stop()
+                self.threadSave = None
+                
             # Button text is changed again
             self.btnStart.setText("Start Gen and Adq!")
 
@@ -287,12 +359,89 @@ class MainWindow(Qt.QWidget):
         self.threadLockIn.AddData(NewData=self.threadGeneration.OutData)
         # to read noisy signal
         # self.threadLockIn.AddData(NewData=self.threadGeneration.OutNoiseData)
-        # Falta mostrat plot y PSD cuando javi los haga para 1
 
     def on_NewDemodSample(self):
-        # Falta mostrat plot y PSD cuando javi los haga para 1
+        
         print('demodDone')
+        if self.threadPlotter is not None:
+            self.threadPlotter.AddData(self.threadLockIn.OutDemodDataReShape)
 
+        if self.threadPsdPlotter is not None:
+            self.threadPsdPlotter.AddData(self.threadLockIn.OutDemodDataReShape)
+# #############################Plots##############################
+    def Gen_Destroy_Plotters(self):
+        '''
+        This function is executed to initialize and start or destroy time plot
+        '''
+        # If Time plot thread does not exist
+        if self.threadPlotter is None:
+            # And the plot enable checkbox is selected
+            if self.PlotParams.param('PlotEnable').value() is True:
+                # A dictionary obtained with Get Params function is saved
+                PlotterKwargs = self.PlotParams.GetParams()
+                # And is sent to Plotter thread to initialize it
+                self.threadPlotter = TimePlt.Plotter(**PlotterKwargs)
+                # Then thread is started
+                self.threadPlotter.start()
+        # If time plot thread exists
+        if self.threadPlotter is not None:
+            # And plot enable checkbox is not selected
+            if self.PlotParams.param('PlotEnable').value() is False:
+                # The thread is stopped and set to None
+                self.threadPlotter.stop()
+                self.threadPlotter = None
+
+    def Gen_Destroy_PsdPlotter(self):
+        '''
+        This function is executed to initialize and start or destroy PSD plot
+        '''
+        # If PSD plot thread does not exist
+        if self.threadPsdPlotter is None:
+            # And the plot enable checkbox is selected
+            if self.PsdPlotParams.param('PSDEnable').value() is True:
+                # A dictionary obtained with Get Params function is saved
+                PlotterKwargs = self.PlotParams.GetParams()
+                # And is sent to PSDPlotter thread to initialize it
+                self.threadPsdPlotter = PSDPlt.PSDPlotter(ChannelConf=PlotterKwargs['ChannelConf'],
+                                                          nChannels=1,
+                                                          **self.PsdPlotParams.GetParams())
+                # Then thread is started
+                self.threadPsdPlotter.start()
+        # If PSD plot thread exists
+        if self.threadPsdPlotter is not None:
+            # And plot enable checkbox is not selected
+            if self.PsdPlotParams.param('PSDEnable').value() is False:
+                # The thread is stopped and set to None
+                self.threadPsdPlotter.stop()
+                self.threadPsdPlotter = None
+
+# #############################Saving Files##############################
+    def SaveFiles(self):
+        '''
+        This function is executed to initialize and start save thread
+        '''
+        # The File Name is obtained from the GUI File Path
+        FileName = self.FileParams.param('File Path').value()
+        # If the is no file name, No file is printed
+        if FileName == '':
+            print('No file')
+        # If there is file name
+        else:
+            # It is checked if the file exists, if it exists is removed
+            if os.path.isfile(FileName):
+                print('Remove File')
+                os.remove(FileName)
+            # Maximum size alowed for the new file is obtained from the GUI
+            MaxSize = self.FileParams.param('MaxSize').value()
+            # The threas is initialized
+            self.threadDemodSave = FileMod.DataSavingThread(FileName=FileName,
+                                                            nChannels=1,
+                                                            MaxSize=MaxSize,
+                                                            Fs = self.SigParams.Fs.value(),
+                                                            dtype='float')
+            # And then started
+            self.threadDemodSave.start()
+            
 # ############################MAIN##############################
 
 if __name__ == '__main__':
