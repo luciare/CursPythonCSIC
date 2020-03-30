@@ -37,7 +37,7 @@ LPFilterParams = ({'name': 'LPFConfig',
 
 
 class LPFilterConfig(pTypes.GroupParameter):
-    def __init__(self, **kwargs):
+    def __init__(self, QTparent, **kwargs):
         pTypes.GroupParameter.__init__(self, **kwargs)
         # Add General Configuration Tree 
         self.addChild(LPFilterParams)

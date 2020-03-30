@@ -53,7 +53,7 @@ class MainWindow(Qt.QWidget):
         # GUI that has already been created.
         # Name is the name that you want as title of your tree in the GUI
         self.SigParams = SigConfig.SignalConfig(QTparent=self,
-                                                name='Signal Configuration')
+                                                name='Signal SetUp')
         self.Parameters.addChild(self.SigParams)
         # You can create variables of the main class with the values of
         # an specific tree you have create in a concret GrouParameter class
@@ -136,15 +136,9 @@ class MainWindow(Qt.QWidget):
 
         '''
         # All Fs values are changed with SigParams.Fs value
-        self.LockInConf.param('Fs').setValue(self.SigParams.Fs.value())
-        self.LPFConf.param('Fs').setValue(self.SigParams.Fs.value())
         self.PlotParams.param('Fs').setValue(self.SigParams.Fs.value())
         self.PsdPlotParams.param('Fs').setValue(self.SigParams.Fs.value())
-        # Also nSamples value of LockInConf is changed with SigParams nSamples
-        # value
-        self.LockInConf.param(
-                        'nSamples').setValue(
-                                    self.SigParams.nSamples.value())
+        
     def on_CarrierConfig_changed(self):
         '''
         This function is used to change the Carrier parameters while the

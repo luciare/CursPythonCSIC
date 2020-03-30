@@ -50,7 +50,7 @@ LockInParams = ({'name': 'LockInConfig',
 
 
 class LockIn_Config(pTypes.GroupParameter):
-    def __init__(self, **kwargs):
+    def __init__(self, QTparent, **kwargs):
 
         pTypes.GroupParameter.__init__(self, **kwargs)
         # Add General Configuration Tree 

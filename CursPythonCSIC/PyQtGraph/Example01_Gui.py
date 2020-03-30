@@ -56,7 +56,7 @@ class MainWindow(Qt.QWidget):
         # GUI that has already been created.
         # Name is the name that you want as title of your tree in the GUI
         self.SigParams = SigConfig.SignalConfig(QTparent=self,
-                                                name='Signal Configuration')
+                                                name='Signal SetUp')
         self.Parameters.addChild(self.SigParams)
         # You can create variables of the main class with the values of
         # an specific tree you have created in a concret GroupParameter class
@@ -67,7 +67,7 @@ class MainWindow(Qt.QWidget):
 # ############################LockInConfig##############################
         # It is added the tree of LockIn_Config to the actual GUI
         self.LockInParams = LockInConfig.LockIn_Config(QTparent=self,
-                                                       name='LockIn Configuration')
+                                                       name='LockIn SetUp')
         # And its parameters are added to Parameters variable
         self.Parameters.addChild(self.LockInParams)
         # A variable with LockInConfig parameters is created
@@ -76,7 +76,7 @@ class MainWindow(Qt.QWidget):
 # ############################LPFConfig##############################
         # It is added the tree of LPFilterConfig to the actual GUI
         self.LPFParams = LPFilter.LPFilterConfig(QTparent=self,
-                                                 name='LPF Configuration')
+                                                 name='LPF SetUp')
         # And its parameters are added to Parameters variable
         self.Parameters.addChild(self.LPFParams) 
         # A variable with LPFConfig parameters is created
@@ -197,6 +197,9 @@ class MainWindow(Qt.QWidget):
         self.LPFConf.param(
                      'CuttOffFreq').setValue(
                                     self.LockInParams.OutFs.value())
+                         
+        self.PlotParams.param('Fs').setValue(self.LockInParams.OutFs.value())
+        self.PsdPlotParams.param('Fs').setValue(self.LockInParams.OutFs.value())
 
     def on_GenConfig_changed(self):
         '''

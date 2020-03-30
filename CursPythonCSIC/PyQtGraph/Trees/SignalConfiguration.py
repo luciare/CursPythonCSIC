@@ -19,7 +19,6 @@ GeneralConfiguration = {'name': 'GeneralConfig',
                                       'title': 'Number of Samples',
                                       'type': 'int',
                                       'value': int(20e3),
-                                      'readonly': False,
                                       'siPrefix': True,
                                       'suffix': 'Samples'},
                                      {'name': 'tInterrupt',
@@ -43,7 +42,6 @@ CarrierConfiguration = {'name': 'CarrierConfig',
                                       'title': 'Carrier Frequency',
                                       'type': 'float',
                                       'value': 10e3,
-                                      'readonly': False,
                                       'siPrefix': True,
                                       'suffix': 'Hz'},
                                      {'name': 'Phase',
@@ -79,7 +77,6 @@ ModulationConfiguration = {'name': 'ModConfig',
                                          'title': 'Modulation Frequency',
                                          'type': 'float',
                                          'value': 1e3,
-                                         'readonly': False,
                                          'siPrefix': True,
                                          'suffix': 'Hz'},
                                         {'name': 'ModFactor',
@@ -98,7 +95,7 @@ ModulationConfiguration = {'name': 'ModConfig',
                            }
 
 class SignalConfig(pTypes.GroupParameter):
-    def __init__(self, **kwargs):
+    def __init__(self, QTparent, **kwargs):
 
         pTypes.GroupParameter.__init__(self, **kwargs)
         # Add General Configuration Tree 
