@@ -200,6 +200,8 @@ class MainWindow(Qt.QWidget):
                          
         self.PlotParams.param('Fs').setValue(self.LockInParams.OutFs.value())
         self.PsdPlotParams.param('Fs').setValue(self.LockInParams.OutFs.value())
+        self.PlotParams.param('ViewBuffer').setValue(
+            self.SigParams.nSamples.value()/self.LockInParams.OutFs.value())
 
     def on_GenConfig_changed(self):
         '''
@@ -217,6 +219,9 @@ class MainWindow(Qt.QWidget):
         self.LockInConf.param(
                         'nSamples').setValue(
                                     self.SigParams.nSamples.value())
+                            
+        self.PlotParams.param('ViewBuffer').setValue(
+            self.SigParams.nSamples.value()/self.LockInParams.OutFs.value())
 
     def on_CarrierConfig_changed(self):
         '''

@@ -131,13 +131,14 @@ class MainWindow(Qt.QWidget):
     def on_GenConfig_changed(self):
         '''
         This function is used to change the Sampling frequency value and 
-        nSamples value of Lock In and Low pass Filter trees to the ones
-        specified in the signal configuration
+        nSamples value of plots to the ones specified in the signal configuration
 
         '''
         # All Fs values are changed with SigParams.Fs value
         self.PlotParams.param('Fs').setValue(self.SigParams.Fs.value())
         self.PsdPlotParams.param('Fs').setValue(self.SigParams.Fs.value())
+        self.PlotParams.param('ViewBuffer').setValue(
+            self.SigParams.nSamples.value()/self.SigParams.Fs.value())
         
     def on_CarrierConfig_changed(self):
         '''
