@@ -381,12 +381,23 @@ class MainWindow(Qt.QWidget):
         print('demodDone')
         if self.threadDemodSave is not None:
             self.threadDemodSave.AddData(self.threadLockIn.OutDemodDataReShape)
-            
+        
+        if self.LockInConf.param('OutType').value() == 'Abs':
+            OutDemodData = np.abs(self.threadLockIn.OutDemodDataReShape)
+        elif self.LockInConf.param('OutType').value() == 'Real':
+            OutDemodData = np.real(self.threadLockIn.OutDemodDataReShape)
+        elif self.LockInConf.param('OutType').value() == 'Imag':
+            OutDemodData = np.imag(self.threadLockIn.OutDemodDataReShape)
+        elif self.LockInConf.param('OutType').value() == 'Angle':
+            OutDemodData = np.angle(self.threadLockIn.OutDemodDataReShape,
+                                    deg=True)
+
         if self.threadPlotter is not None:
-            self.threadPlotter.AddData(self.threadLockIn.OutDemodDataReShape)
+            self.threadPlotter.AddData(OutDemodData)
 
         if self.threadPsdPlotter is not None:
-            self.threadPsdPlotter.AddData(self.threadLockIn.OutDemodDataReShape)
+            self.threadPsdPlotter.AddData(OutDemodData)
+            
 # #############################Plots##############################
     def Gen_Destroy_Plotters(self):
         '''
