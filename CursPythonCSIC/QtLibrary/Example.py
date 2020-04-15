@@ -16,7 +16,7 @@ import os
 from qtpy import QtWidgets, uic
 import Example_Core as SigGen
 # from PyQt5.QtWidgets import QApplication
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 # import numpy as np
 
 
@@ -84,9 +84,18 @@ class MainWindow(QtWidgets.QDialog):
 
             # Define Events
             self.Generation.EventAmDataDone = self.SignalDoneCallback
+            self.IsRunning = True
+            self.fig, self.ax = plt.subplots()
 
+            self.StartButton.setText('Stop')
+            print('Start Button')
+            # self.Generation.Running = True
             self.Generation.InitSignal()
-
+        else:
+            print('Stop')
+            self.IsRunning = None
+            self.StartButton.setText('Start')
+            self.Generation.Running = False
 
     def GetVariables(self):
         SigConfig = {}
@@ -106,8 +115,11 @@ class MainWindow(QtWidgets.QDialog):
     def GeneralConfiguration(self):
         print('General Configuration')
 
-    def SignalDoneCallback(self, Data, Time):
+    def SignalDoneCallback(self, Data, time):
         print('PLot')
+        self.ax.plot(Data, time)
+        self.fig.canvas.draw()
+        
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])

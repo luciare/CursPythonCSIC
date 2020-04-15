@@ -80,7 +80,7 @@ def GenAMSignal(Fs, nSamples, Amplitude, CarrFrequency, CarrNoise,
         # signals calculated before with noise
         AMSignalNoise = (1+ModulationNoise)*CarrierNoise
         
-        return AMSignal
+        return AMSignal, t
         # return AMSignalNoise
 
 class GenerationEvent():
@@ -120,27 +120,31 @@ class GenerationEvent():
 
 
     def GetAmData(self):
-        print(self.SigConfigKwargs)
-        self.OutData = GenAMSignal(**self.SigConfigKwargs)
+        print('GetAMData')
+        self.OutData, self.t = GenAMSignal(**self.SigConfigKwargs)
         self.OutDataReShape = np.reshape(self.OutData,
                                          (self.OutData.size, 1)
                                          )
         if self.EventDataDone:
-            self.EventDataDone(self.OutDataReShape)
+            self.EventDataDone(self.OutDataReShape, self.t)
         return
 
 
 class DataProcess(GenerationEvent):
 
     EventAmDataDone = None
+    Running = False
 
     def InitSignal(self):
-        
+        print('InitSignal')
         self.EventDataDone = self.DataDoneCallback
+        
+        # while self.Running:
         self.GetAmData()
 
-    def DataDoneCallback(self, Data):
+    def DataDoneCallback(self, Data, time):
+        print(Data.shape)
         if self.EventAmDataDone:
-            self.EventAmDataDone(Data)
+            self.EventAmDataDone(Data, time)
 
    
