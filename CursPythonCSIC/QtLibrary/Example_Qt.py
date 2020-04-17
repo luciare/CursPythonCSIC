@@ -15,9 +15,7 @@ import os
 
 from qtpy import QtWidgets, uic
 import Example_Core as SigGen
-# from PyQt5.QtWidgets import QApplication
 import matplotlib.pyplot as plt
-# import numpy as np
 
 
 class MainWindow(QtWidgets.QDialog):
@@ -36,7 +34,7 @@ class MainWindow(QtWidgets.QDialog):
         # Buttons
         '''
         This line connect the Button named "StartButton" with the function
-        "StartButtonClicked", so when the button is clicked, the code inside 
+        "StartButtonClicked", so when the button is clicked, the code inside
         the function is executed.
         '''
         self.StartButton.clicked.connect(self.StartButtonClicked)
@@ -49,12 +47,12 @@ class MainWindow(QtWidgets.QDialog):
         self.SpnSampRate.valueChanged.connect(self.GeneralConfiguration)
         self.SpnNSamples.valueChanged.connect(self.GeneralConfiguration)
         self.SpnInterruptTime.valueChanged.connect(self.GeneralConfiguration)
-        
+
         # Combo Box
         # self.CmbCarrierType.currentIndexChanged.connect(self.)
         # self.CmbModType.currentIndexChanged.connect(self.)
         # float(self.CmbCarrierType.currentText())
-        
+
         # self.SignalVariables = [self.SpnSampRate,
         #                         self.SpnNSamples,
         #                         self.SpnInterruptTime,
@@ -67,10 +65,9 @@ class MainWindow(QtWidgets.QDialog):
         #                         self.SpnModNoiseLevel,
         #                         ]
 
-
     def StartButtonClicked(self):
         '''
-        This function is executed when the 'start' button is pressed. 
+        This function is executed when the 'start' button is pressed.
 
         '''
         print('Start Button Clicked')
@@ -78,7 +75,7 @@ class MainWindow(QtWidgets.QDialog):
             # Get the Signal Configuration Variables
             SigVariables = self.GetVariables()
             # Generation Thread (¿?)
-            # Create a Callback in order to generate the signal and execute 
+            # Create a Callback in order to generate the signal and execute
             # a function when the signal generated be executed
             self.Generation = SigGen.DataProcess(SigConfig=SigVariables)
 
@@ -117,9 +114,9 @@ class MainWindow(QtWidgets.QDialog):
 
     def SignalDoneCallback(self, Data, time):
         print('PLot')
-        self.ax.plot(Data, time)
+        self.ax.plot(time, Data)
         self.fig.canvas.draw()
-        
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])
