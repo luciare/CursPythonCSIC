@@ -6,95 +6,95 @@ Created on Mon Apr  6 15:03:44 2020
 """
 
 import os
-# import sys
-
-# from qtpy.QtWidgets import (QHeaderView, QCheckBox, QSpinBox, QLineEdit,
-#                             QDoubleSpinBox, QTextEdit, QComboBox,
-#                             QTableWidget, QAction, QMessageBox, QFileDialog,
-#                             QInputDialog)
-
 from qtpy import QtWidgets, uic
-import Example_Core as SigGen
 import matplotlib.pyplot as plt
+
+import Example_Core as SigGen
 
 
 class MainWindow(QtWidgets.QDialog):
+    "Main Window"
     OutFigFormats = ('svg', 'png')
-
-    IsRunning = None
     Generation = None
 
     def __init__(self, parent=None):
+        # "Super" is used to initialize the class from which this class
+        # depends, in this case MainWindow depends on Qt.Widget class
         super().__init__()
         QtWidgets.QMainWindow.__init__(self)
+
+        # It takes the .ui file that contains the graphical part of the main
+        # program in order to conect the different objects with this script.
         uipath = os.path.join(os.path.dirname(__file__), 'Example_Qt.ui')
         uic.loadUi(uipath, self)
-        self.setWindowTitle('Example')
+
+        self.setWindowTitle('Example QtDesigner')
 
         # Buttons
         '''
-        This line connect the Button named "StartButton" with the function
+        Connect the Button named "StartButton" with the function
         "StartButtonClicked", so when the button is clicked, the code inside
         the function is executed.
         '''
         self.StartButton.clicked.connect(self.StartButtonClicked)
 
-        # Spin Box Signals (not needed)
-        '''
-        This signals are applied when you want get the parameters of a spinbox
-        during the execution of the program.
-        '''
-        self.SpnSampRate.valueChanged.connect(self.GeneralConfiguration)
-        self.SpnNSamples.valueChanged.connect(self.GeneralConfiguration)
-        self.SpnInterruptTime.valueChanged.connect(self.GeneralConfiguration)
-
-        # Combo Box
-        # self.CmbCarrierType.currentIndexChanged.connect(self.)
-        # self.CmbModType.currentIndexChanged.connect(self.)
-        # float(self.CmbCarrierType.currentText())
-
-        # self.SignalVariables = [self.SpnSampRate,
-        #                         self.SpnNSamples,
-        #                         self.SpnInterruptTime,
-        #                         self.SpnCarrierFreq,
-        #                         self.SpnCarrierPhase,
-        #                         self.SpnCarrierAmp,
-        #                         self.SpnNoiseLevel,
-        #                         self.SpnModFreq,
-        #                         self.SpnModFactor,
-        #                         self.SpnModNoiseLevel,
-        #                         ]
+        # # Spin Box Signals (not needed)
+        # '''
+        # Signals are applied when you want to get the parameters of a spinbox
+        # during the execution of the program.
+        # '''
+        # self.SpnSampRate.valueChanged.connect(self.SamplingRateSignal)
 
     def StartButtonClicked(self):
         '''
-        This function is executed when the 'start' button is pressed.
-
+        Executed when the 'start' button is pressed.
+        It takes the Signal Setup Configuration variables in order to execute
+        the signal generator.
         '''
         print('Start Button Clicked')
-        if self.IsRunning is None:
-            # Get the Signal Configuration Variables
-            SigVariables = self.GetVariables()
-            # Generation Thread (¿?)
-            # Create a Callback in order to generate the signal and execute
-            # a function when the signal generated be executed
-            self.Generation = SigGen.DataProcess(SigConfig=SigVariables)
+        # Calls to a "GetVariables" function to get the different variables of
+        # signal configuration
+        SigVariables = self.GetVariables()
 
-            # Define Events
-            self.Generation.EventAmDataDone = self.SignalDoneCallback
-            self.IsRunning = True
-            self.fig, self.ax = plt.subplots()
+        # Initialization of Example_Core script
+        # Create a Callback in order to generate the signal and execute
+        # a function when the signal generated be executed
+        self.Generation = SigGen.DataProcess(SigConfig=SigVariables)
 
-            self.StartButton.setText('Stop')
-            print('Start Button')
-            # self.Generation.Running = True
-            self.Generation.InitSignal()
-        else:
-            print('Stop')
-            self.IsRunning = None
-            self.StartButton.setText('Start')
-            self.Generation.Running = False
+        # Define Events
+        self.Generation.EventAmDataDone = self.SignalDoneCallback
+
+        # Create Figure
+        self.fig, self.ax = plt.subplots()
+
+        # Starts the generation of the signal
+        self.Generation.InitSignal()
 
     def GetVariables(self):
+        '''
+        Gets the different variables from the QtDesigner Spinboxes or
+        ComboBoxes and creates a dictionary for creating the corresponding
+        signals.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        A Dictionary with the data arranged as follows:
+        SigConfig : dictionary
+                    {'Fs': 1000.0,
+                     'nSamples': 200,
+                     'Amplitude': 0.50,
+                     'CarrFrequency': 500,
+                     'CarrNoise': 0,
+                     'Phase': 0,
+                     'ModType': Sinusoidal,
+                     'ModFrequency': 1000,
+                     'ModFactor': 0.10,
+                     'ModNoise': 0, }
+        '''
         SigConfig = {}
         SigConfig['Fs'] = self.SpnSampRate.value()
         SigConfig['nSamples'] = self.SpnNSamples.value()
@@ -109,11 +109,12 @@ class MainWindow(QtWidgets.QDialog):
 
         return SigConfig
 
-    def GeneralConfiguration(self):
-        print('General Configuration')
-
     def SignalDoneCallback(self, Data, time):
-        print('PLot')
+        '''
+        Callback function that is executed when data is arranged from
+        DataProcessClass from Example_Core script
+        '''
+        print('SignalDoneCallback')
         self.ax.plot(time, Data)
         self.fig.canvas.draw()
 
