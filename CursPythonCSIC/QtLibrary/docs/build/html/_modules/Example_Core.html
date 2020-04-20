@@ -1,0 +1,233 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Example_Core &#8212; QtDocs 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for Example_Core</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Mon Apr  6 15:03:53 2020</span>
+
+<span class="sd">@author: javi8</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">signal</span>
+
+
+<div class="viewcode-block" id="GenAMSignal"><a class="viewcode-back" href="../Example_Core.html#Example_Core.GenAMSignal">[docs]</a><span class="k">def</span> <span class="nf">GenAMSignal</span><span class="p">(</span><span class="n">Fs</span><span class="p">,</span> <span class="n">nSamples</span><span class="p">,</span> <span class="n">Amplitude</span><span class="p">,</span> <span class="n">CarrFrequency</span><span class="p">,</span> <span class="n">CarrNoise</span><span class="p">,</span>
+                <span class="n">Phase</span><span class="p">,</span> <span class="n">ModType</span><span class="p">,</span> <span class="n">ModFrequency</span><span class="p">,</span> <span class="n">ModFactor</span><span class="p">,</span> <span class="n">ModNoise</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This class is used to generate Carrier and Modulation Waveform and</span>
+<span class="sd">    combine them as AM Modulation</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    :param:Fs: float</span>
+<span class="sd">    :param:nSamples: int</span>
+<span class="sd">    :param:Amplitude: float</span>
+<span class="sd">    :param:CarrFrequency: float</span>
+<span class="sd">    :param:CarrNoise: float</span>
+<span class="sd">    :param:Phase: int</span>
+<span class="sd">    :param:ModType: str</span>
+<span class="sd">    :param:ModFrequency: float</span>
+<span class="sd">    :param:ModFactor: float</span>
+<span class="sd">    :param:ModNoise: float</span>
+<span class="sd">    :param:**Kwargs: kwargs</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None.</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1"># Some parameters that are going to be needed in several functions are</span>
+    <span class="c1"># saved as class variables</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">((</span><span class="mi">1</span><span class="o">/</span><span class="n">Fs</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">nSamples</span><span class="p">)),</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">Fs</span><span class="p">))</span>
+    <span class="c1"># The amplitude of the modulated signal is calculated as the ampitude</span>
+    <span class="c1"># of the carrier multiplied with the modulation factor</span>
+    <span class="n">AmpMod</span> <span class="o">=</span> <span class="n">Amplitude</span><span class="o">*</span><span class="n">ModFactor</span>
+    <span class="c1"># Depending on the waveform (sinsuoidal or square) the appropiate</span>
+    <span class="c1"># function is called to generate the modulation wave</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">ModType</span><span class="p">,</span> <span class="s1">&#39;ModType&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ModType</span> <span class="o">==</span> <span class="s1">&#39;Sinusoidal&#39;</span><span class="p">:</span>
+        <span class="c1"># The modulation signal is calculated as a cosinus waveform</span>
+        <span class="n">Modulation</span> <span class="o">=</span> <span class="n">AmpMod</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ModFrequency</span><span class="o">*</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+        <span class="c1"># a random noise is added to the signal</span>
+        <span class="n">ModulationNoise</span> <span class="o">=</span> <span class="n">Modulation</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span>
+                                                                <span class="n">ModNoise</span><span class="p">,</span>
+                                                                <span class="n">Modulation</span><span class="o">.</span><span class="n">size</span>
+                                                                <span class="p">)</span>
+                                               <span class="p">)</span>
+    <span class="k">if</span> <span class="n">ModType</span> <span class="o">==</span> <span class="s1">&#39;Square&#39;</span><span class="p">:</span>
+        <span class="c1"># The modulation signal is calculated as a square waveform</span>
+        <span class="n">Modulation</span> <span class="o">=</span> <span class="n">AmpMod</span><span class="o">*</span><span class="n">signal</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">ModFrequency</span><span class="o">*</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+        <span class="c1"># a random noise is added to the signal</span>
+        <span class="n">ModulationNoise</span> <span class="o">=</span> <span class="n">Modulation</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span>
+                                                                <span class="n">ModNoise</span><span class="p">,</span>
+                                                                <span class="n">Modulation</span><span class="o">.</span><span class="n">size</span>
+                                                                <span class="p">)</span>
+                                               <span class="p">)</span>
+
+    <span class="c1"># The carrier signal is calculated as a cosinus waveform</span>
+    <span class="n">Carrier</span> <span class="o">=</span> <span class="n">Amplitude</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">CarrFrequency</span><span class="o">*</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">+</span><span class="n">Phase</span><span class="p">)</span>
+    <span class="c1"># a random noise is added to the signal</span>
+    <span class="n">CarrierNoise</span> <span class="o">=</span> <span class="n">Carrier</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span>
+                                                      <span class="n">CarrNoise</span><span class="p">,</span>
+                                                      <span class="n">Carrier</span><span class="o">.</span><span class="n">size</span>
+                                                      <span class="p">)</span>
+                                     <span class="p">)</span>
+
+    <span class="c1"># Signal is generated as the AM modulation of Carrier and modulation</span>
+    <span class="c1"># signals calculated before without noise</span>
+    <span class="n">AMSignal</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">Modulation</span><span class="p">)</span><span class="o">*</span><span class="n">Carrier</span>
+    <span class="c1"># Signal is generated as the AM modulation of Carrier and modulation</span>
+    <span class="c1"># signals calculated before with noise</span>
+    <span class="n">AMSignalNoise</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">ModulationNoise</span><span class="p">)</span><span class="o">*</span><span class="n">CarrierNoise</span>
+
+    <span class="k">return</span> <span class="n">AMSignal</span><span class="p">,</span> <span class="n">t</span></div>
+    <span class="c1"># return AMSignalNoise</span>
+
+
+<div class="viewcode-block" id="GenerationEvent"><a class="viewcode-back" href="../Example_Core.html#Example_Core.GenerationEvent">[docs]</a><span class="k">class</span> <span class="nc">GenerationEvent</span><span class="p">():</span>
+
+    <span class="n">EventDataDone</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SigConfig</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Initialation of the Signal Generation. Assignment of the kwargs</span>
+<span class="sd">        configuration parameters.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SigConfigKwargs</span> <span class="o">=</span> <span class="n">SigConfig</span>
+
+<div class="viewcode-block" id="GenerationEvent.GetAmData"><a class="viewcode-back" href="../Example_Core.html#Example_Core.GenerationEvent.GetAmData">[docs]</a>    <span class="k">def</span> <span class="nf">GetAmData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Calls to GenAMSignal function to get the corresponging generated signal</span>
+<span class="sd">        Data returned is called OutData and it is passed to the callback</span>
+<span class="sd">        EventDataDone to the DataDoneCallback function.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;GetAMData&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">OutData</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="n">GenAMSignal</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">SigConfigKwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">OutDataReShape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">OutData</span><span class="p">,</span>
+                                         <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">OutData</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                                         <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">EventDataDone</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">EventDataDone</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">OutDataReShape</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">)</span>
+        <span class="k">return</span></div></div>
+
+
+<div class="viewcode-block" id="DataProcess"><a class="viewcode-back" href="../Example_Core.html#Example_Core.DataProcess">[docs]</a><span class="k">class</span> <span class="nc">DataProcess</span><span class="p">(</span><span class="n">GenerationEvent</span><span class="p">):</span>
+    <span class="s2">&quot;DataProcess&quot;</span>
+
+    <span class="c1"># Event for the data returning</span>
+    <span class="n">EventAmDataDone</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="DataProcess.InitSignal"><a class="viewcode-back" href="../Example_Core.html#Example_Core.DataProcess.InitSignal">[docs]</a>    <span class="k">def</span> <span class="nf">InitSignal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Events Linked.</span>
+<span class="sd">        Calling to GetAMData function</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;InitSignal&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">EventDataDone</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DataDoneCallback</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">GetAmData</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="DataProcess.DataDoneCallback"><a class="viewcode-back" href="../Example_Core.html#Example_Core.DataProcess.DataDoneCallback">[docs]</a>    <span class="k">def</span> <span class="nf">DataDoneCallback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Data</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returning Data to Example_Qt script through the Callback function.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="n">Data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">EventAmDataDone</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">EventAmDataDone</span><span class="p">(</span><span class="n">Data</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span></div></div>
+  
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">QtDocs</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, JavierMartinez.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

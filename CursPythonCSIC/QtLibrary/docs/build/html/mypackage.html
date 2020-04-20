@@ -1,0 +1,263 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>mypackage package &#8212; QtDocs 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="mypackage-package">
+<h1>mypackage package<a class="headerlink" href="#mypackage-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-mypackage.Example_Core">
+<span id="mypackage-example-core-module"></span><h2>mypackage.Example_Core module<a class="headerlink" href="#module-mypackage.Example_Core" title="Permalink to this headline">¶</a></h2>
+<p>Created on Mon Apr  6 15:03:53 2020</p>
+<p>&#64;author: javi8</p>
+<dl class="class">
+<dt id="mypackage.Example_Core.DataProcess">
+<em class="property">class </em><code class="sig-prename descclassname">mypackage.Example_Core.</code><code class="sig-name descname">DataProcess</code><span class="sig-paren">(</span><em class="sig-param">SigConfig</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mypackage/Example_Core.html#DataProcess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mypackage.Example_Core.DataProcess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mypackage.Example_Core.GenerationEvent" title="mypackage.Example_Core.GenerationEvent"><code class="xref py py-class docutils literal notranslate"><span class="pre">mypackage.Example_Core.GenerationEvent</span></code></a></p>
+<dl class="method">
+<dt id="mypackage.Example_Core.DataProcess.DataDoneCallback">
+<code class="sig-name descname">DataDoneCallback</code><span class="sig-paren">(</span><em class="sig-param">Data</em>, <em class="sig-param">time</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mypackage/Example_Core.html#DataProcess.DataDoneCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mypackage.Example_Core.DataProcess.DataDoneCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returning Data to Example_Qt script through the Callback function.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mypackage.Example_Core.DataProcess.EventAmDataDone">
+<code class="sig-name descname">EventAmDataDone</code><em class="property"> = None</em><a class="headerlink" href="#mypackage.Example_Core.DataProcess.EventAmDataDone" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="mypackage.Example_Core.DataProcess.InitSignal">
+<code class="sig-name descname">InitSignal</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mypackage/Example_Core.html#DataProcess.InitSignal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mypackage.Example_Core.DataProcess.InitSignal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Events Linked.
+Calling to GetAMData function</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="mypackage.Example_Core.GenAMSignal">
+<code class="sig-prename descclassname">mypackage.Example_Core.</code><code class="sig-name descname">GenAMSignal</code><span class="sig-paren">(</span><em class="sig-param">Fs</em>, <em class="sig-param">nSamples</em>, <em class="sig-param">Amplitude</em>, <em class="sig-param">CarrFrequency</em>, <em class="sig-param">CarrNoise</em>, <em class="sig-param">Phase</em>, <em class="sig-param">ModType</em>, <em class="sig-param">ModFrequency</em>, <em class="sig-param">ModFactor</em>, <em class="sig-param">ModNoise</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mypackage/Example_Core.html#GenAMSignal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mypackage.Example_Core.GenAMSignal" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class is used to generate Carrier and Modulation Waveform and
+combine them as AM Modulation</p>
+<p>:param :
+:type : param:Fs: float
+:param :
+:type : param:nSamples: int
+:param :
+:type : param:Amplitude: float
+:param :
+:type : param:CarrFrequency: float
+:param :
+:type : param:CarrNoise: float
+:param :
+:type : param:Phase: int
+:param :
+:type : param:ModType: str
+:param :
+:type : param:ModFrequency: float
+:param :
+:type : param:ModFactor: float
+:param :
+:type : param:ModNoise: float
+:param :
+:type : param:<a href="#id1"><span class="problematic" id="id2">**</span></a>Kwargs: kwargs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="mypackage.Example_Core.GenerationEvent">
+<em class="property">class </em><code class="sig-prename descclassname">mypackage.Example_Core.</code><code class="sig-name descname">GenerationEvent</code><span class="sig-paren">(</span><em class="sig-param">SigConfig</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mypackage/Example_Core.html#GenerationEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mypackage.Example_Core.GenerationEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="mypackage.Example_Core.GenerationEvent.EventDataDone">
+<code class="sig-name descname">EventDataDone</code><em class="property"> = None</em><a class="headerlink" href="#mypackage.Example_Core.GenerationEvent.EventDataDone" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="mypackage.Example_Core.GenerationEvent.GetAmData">
+<code class="sig-name descname">GetAmData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mypackage/Example_Core.html#GenerationEvent.GetAmData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mypackage.Example_Core.GenerationEvent.GetAmData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls to GenAMSignal function to get the corresponging generated signal
+Data returned is called OutData and it is passed to the callback
+EventDataDone to the DataDoneCallback function.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-mypackage.Example_Qt">
+<span id="mypackage-example-qt-module"></span><h2>mypackage.Example_Qt module<a class="headerlink" href="#module-mypackage.Example_Qt" title="Permalink to this headline">¶</a></h2>
+<p>Created on Mon Apr  6 15:03:44 2020</p>
+<p>&#64;author: javi8</p>
+<dl class="class">
+<dt id="mypackage.Example_Qt.MainWindow">
+<em class="property">class </em><code class="sig-prename descclassname">mypackage.Example_Qt.</code><code class="sig-name descname">MainWindow</code><span class="sig-paren">(</span><em class="sig-param">parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mypackage/Example_Qt.html#MainWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mypackage.Example_Qt.MainWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
+<p>Main Window</p>
+<dl class="attribute">
+<dt id="mypackage.Example_Qt.MainWindow.Generation">
+<code class="sig-name descname">Generation</code><em class="property"> = None</em><a class="headerlink" href="#mypackage.Example_Qt.MainWindow.Generation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="mypackage.Example_Qt.MainWindow.GetVariables">
+<code class="sig-name descname">GetVariables</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mypackage/Example_Qt.html#MainWindow.GetVariables"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mypackage.Example_Qt.MainWindow.GetVariables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the different variables from the QtDesigner Spinboxes or
+ComboBoxes and creates a dictionary for creating the corresponding
+signals.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul>
+<li><p><em>A Dictionary with the data arranged as follows</em></p></li>
+<li><p><strong>SigConfig</strong> (<em>dictionary</em>) –</p>
+<dl class="simple">
+<dt>{‘Fs’: 1000.0,</dt><dd><p>’nSamples’: 200,
+‘Amplitude’: 0.50,
+‘CarrFrequency’: 500,
+‘CarrNoise’: 0,
+‘Phase’: 0,
+‘ModType’: Sinusoidal,
+‘ModFrequency’: 1000,
+‘ModFactor’: 0.10,
+‘ModNoise’: 0, }</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mypackage.Example_Qt.MainWindow.OutFigFormats">
+<code class="sig-name descname">OutFigFormats</code><em class="property"> = ('svg', 'png')</em><a class="headerlink" href="#mypackage.Example_Qt.MainWindow.OutFigFormats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="mypackage.Example_Qt.MainWindow.SignalDoneCallback">
+<code class="sig-name descname">SignalDoneCallback</code><span class="sig-paren">(</span><em class="sig-param">Data</em>, <em class="sig-param">time</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mypackage/Example_Qt.html#MainWindow.SignalDoneCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mypackage.Example_Qt.MainWindow.SignalDoneCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback function that is executed when data is arranged from
+DataProcessClass from Example_Core script</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mypackage.Example_Qt.MainWindow.StartButtonClicked">
+<code class="sig-name descname">StartButtonClicked</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mypackage/Example_Qt.html#MainWindow.StartButtonClicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mypackage.Example_Qt.MainWindow.StartButtonClicked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executed when the ‘start’ button is pressed.
+It takes the Signal Setup Configuration variables in order to execute
+the signal generator.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-mypackage">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-mypackage" title="Permalink to this headline">¶</a></h2>
+<p>Created on Tue Nov 15 17:27:23 2016</p>
+<p>&#64;author: aguimera</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">QtDocs</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, JavierMartinez.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/mypackage.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

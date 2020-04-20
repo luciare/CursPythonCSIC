@@ -1,0 +1,167 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Example_Qt module &#8212; QtDocs 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-Example_Qt">
+<span id="example-qt-module"></span><h1>Example_Qt module<a class="headerlink" href="#module-Example_Qt" title="Permalink to this headline">¶</a></h1>
+<p>Created on Mon Apr  6 15:03:44 2020</p>
+<p>&#64;author: javi8</p>
+<dl class="class">
+<dt id="Example_Qt.MainWindow">
+<em class="property">class </em><code class="sig-prename descclassname">Example_Qt.</code><code class="sig-name descname">MainWindow</code><span class="sig-paren">(</span><em class="sig-param">parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Example_Qt.html#MainWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Example_Qt.MainWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
+<p>Main Window</p>
+<dl class="attribute">
+<dt id="Example_Qt.MainWindow.Generation">
+<code class="sig-name descname">Generation</code><em class="property"> = None</em><a class="headerlink" href="#Example_Qt.MainWindow.Generation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="Example_Qt.MainWindow.GetVariables">
+<code class="sig-name descname">GetVariables</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Example_Qt.html#MainWindow.GetVariables"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Example_Qt.MainWindow.GetVariables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the different variables from the QtDesigner Spinboxes or
+ComboBoxes and creates a dictionary for creating the corresponding
+signals.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul>
+<li><p><em>A Dictionary with the data arranged as follows</em></p></li>
+<li><p><strong>SigConfig</strong> (<em>dictionary</em>) –</p>
+<dl class="simple">
+<dt>{‘Fs’: 1000.0,</dt><dd><p>’nSamples’: 200,
+‘Amplitude’: 0.50,
+‘CarrFrequency’: 500,
+‘CarrNoise’: 0,
+‘Phase’: 0,
+‘ModType’: Sinusoidal,
+‘ModFrequency’: 1000,
+‘ModFactor’: 0.10,
+‘ModNoise’: 0, }</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Example_Qt.MainWindow.OutFigFormats">
+<code class="sig-name descname">OutFigFormats</code><em class="property"> = ('svg', 'png')</em><a class="headerlink" href="#Example_Qt.MainWindow.OutFigFormats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="Example_Qt.MainWindow.SignalDoneCallback">
+<code class="sig-name descname">SignalDoneCallback</code><span class="sig-paren">(</span><em class="sig-param">Data</em>, <em class="sig-param">time</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Example_Qt.html#MainWindow.SignalDoneCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Example_Qt.MainWindow.SignalDoneCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback function that is executed when data is arranged from
+DataProcessClass from Example_Core script</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Example_Qt.MainWindow.StartButtonClicked">
+<code class="sig-name descname">StartButtonClicked</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Example_Qt.html#MainWindow.StartButtonClicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Example_Qt.MainWindow.StartButtonClicked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executed when the ‘start’ button is pressed.
+It takes the Signal Setup Configuration variables in order to execute
+the signal generator.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">QtDocs</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, JavierMartinez.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/Example_Qt.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

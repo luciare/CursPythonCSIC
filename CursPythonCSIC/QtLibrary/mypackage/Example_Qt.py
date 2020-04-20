@@ -46,11 +46,11 @@ class MainWindow(QtWidgets.QDialog):
         # self.SpnSampRate.valueChanged.connect(self.SamplingRateSignal)
 
     def StartButtonClicked(self):
-        '''
+        """
         Executed when the 'start' button is pressed.
         It takes the Signal Setup Configuration variables in order to execute
         the signal generator.
-        '''
+        """
         print('Start Button Clicked')
         # Calls to a "GetVariables" function to get the different variables of
         # signal configuration
@@ -71,7 +71,7 @@ class MainWindow(QtWidgets.QDialog):
         self.Generation.InitSignal()
 
     def GetVariables(self):
-        '''
+        """
         Gets the different variables from the QtDesigner Spinboxes or
         ComboBoxes and creates a dictionary for creating the corresponding
         signals.
@@ -94,7 +94,7 @@ class MainWindow(QtWidgets.QDialog):
                      'ModFrequency': 1000,
                      'ModFactor': 0.10,
                      'ModNoise': 0, }
-        '''
+        """
         SigConfig = {}
         SigConfig['Fs'] = self.SpnSampRate.value()
         SigConfig['nSamples'] = self.SpnNSamples.value()
