@@ -30,7 +30,7 @@ class LowPassFilter():
 
         '''
         # the cutoff frequency is normalized using the sampling frequency
-        freqs = np.array(CuttOffFreq)/(0.5*Fs)
+        freqs = np.array(CuttOffFreq/2)/(0.5*Fs)
         # signal.butter function returns the numerator and denominator 
         # polynomials of the IIR filter
         self.b, self.a = signal.butter(Order,
