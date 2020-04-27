@@ -9,7 +9,7 @@ from scipy import signal
 import numpy as np
 
 class LowPassFilter():
-    def __init__(self, Fs, CuttOffFreq, btype, Order, **kwargs):
+    def __init__(self, Fs, CuttOffFreq, btype, Order):
         '''
         Initialization of LowPassFilterClass
 
@@ -23,7 +23,6 @@ class LowPassFilter():
             The type of filter to be applied (lowpass, bandpass, highpass)
         :param: Order : int
             the order of the filter
-        :param: **kwargs : kwargs
 
         Returns
         -------

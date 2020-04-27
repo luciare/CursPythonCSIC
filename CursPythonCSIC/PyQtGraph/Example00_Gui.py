@@ -220,7 +220,7 @@ class MainWindow(Qt.QWidget):
             # saved in a class variable. This dictionary can be used as kwargs
             self.SignalConfigKwargs = self.SigParams.Get_SignalConf_Params()
             # The dictionary is passed to the genration thread
-            self.threadGeneration = SigGen.GenerationThread(self.SignalConfigKwargs)
+            self.threadGeneration = SigGen.GenerationThread(**self.SignalConfigKwargs)
             # the Qt signal of the generation thread is connected to a
             # function (on_NewSample) so, when the thread emits this signal
             # the specified function will be executed

@@ -10,7 +10,8 @@ import numpy as np
 import ThreadsAndFunctions.LowPassFilterClass as LockInFilter
 
 class LockIn():
-    def __init__(self, LockInConfig, LPFilterConfig):
+    def __init__(self, LPFilterConfig,Fs, nSamples, DSFact, CarrFrequency,
+                 **LockInConfig):
         '''
         Initialation of the Thread for LockIn
 
@@ -47,12 +48,12 @@ class LockIn():
         self.LockInLPF = LockInFilter.LowPassFilter(**LPFilterConfig)
 
         # Initiate class variables
-        self.Fs = LockInConfig['Fs']
-        self.nSamples = LockInConfig['nSamples']
-        self.DownFact = LockInConfig['DSFact']
+        self.Fs = Fs
+        self.nSamples = nSamples
+        self.DownFact = DSFact
         self.ToDemData = None
         # Calculate Local oscilator carrier signal
-        self.GenerateVcoiSignal(LockInConfig['CarrFrequency'])
+        self.GenerateVcoiSignal(CarrFrequency)
 
     def GenerateVcoiSignal(self, Fc):
         '''

@@ -11,7 +11,7 @@ from PyQt5 import Qt
 
 
 def GenAMSignal(Fs, nSamples, Amplitude, CarrFrequency, CarrNoise, Phase,
-                 ModType, ModFrequency, ModFactor, ModNoise, **Kwargs):
+                 ModType, ModFrequency, ModFactor, ModNoise):
         '''
         This class is used to generate Carrier and Modulation Waveform and
         combine them as AM Modulation
@@ -86,7 +86,7 @@ def GenAMSignal(Fs, nSamples, Amplitude, CarrFrequency, CarrNoise, Phase,
 class GenerationThread(Qt.QThread):
     NewGenData = Qt.pyqtSignal()
 
-    def __init__(self, SigConfig):
+    def __init__(self, CarrType, tInterrupt, **kwargs):
         '''
         Initialation of the Thread for Generation
 
@@ -116,8 +116,8 @@ class GenerationThread(Qt.QThread):
         '''
         # super permits to initialize the classes from which this class depends
         super(GenerationThread, self).__init__()
-        self.SigConfigKwargs = SigConfig
-        self.tInterrupt = SigConfig['tInterrupt']
+        self.SigConfigKwargs = kwargs
+        self.tInterrupt = tInterrupt
 
     def run(self):
         '''

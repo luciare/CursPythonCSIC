@@ -47,7 +47,7 @@ class LockInThread(Qt.QThread):
         # super permits to initialize the classes from which this class depends
         super(LockInThread, self).__init__()
         
-        self.LockIn = LockInClass.LockIn(LockInConfig, LPFilterConfig)
+        self.LockIn = LockInClass.LockIn(LPFilterConfig, **LockInConfig)
         self.ToDemData = None
         
         self.tWait = tWait

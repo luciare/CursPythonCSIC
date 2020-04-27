@@ -308,7 +308,7 @@ class MainWindow(Qt.QWidget):
             # is saved to pass to other functions as dictionary or kwargs
             self.LPFConfigKwargs = self.LPFParams.Get_LPF_Params()
             # The dictionary is passed to the genration thread
-            self.threadGeneration = SigGen.GenerationThread(self.SignalConfigKwargs)
+            self.threadGeneration = SigGen.GenerationThread(**self.SignalConfigKwargs)
             # As LPF is used in Lock In process, both dictionaries are passed 
             # to the LockIn Thread
             self.threadLockIn = LockIn.LockInThread(self.LockInConfigKwargs, 
